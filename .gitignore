@@ -1,2 +1,4 @@
 Homestead.yaml
 Homestead.json
+/database/migrations/
+.env
