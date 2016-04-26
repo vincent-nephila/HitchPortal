@@ -1,0 +1,6 @@
+{
+  "name": "laravel.app",
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}

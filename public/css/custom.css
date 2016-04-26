@@ -1,0 +1,32 @@
+html{
+position: relative;
+min-height: 100%;
+}
+
+body{
+    margin-bottom: 80px;
+    background:url(/images/yellow.png);
+}
+
+
+
+.form-control{
+    border-radius: 3px;
+    height: 38px;
+}
+
+
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background-color: #000000/*#f96e5b*/;
+    
+}
+
+.text-muted {
+    margin: 10px 20px;
+    color: white;
+}
