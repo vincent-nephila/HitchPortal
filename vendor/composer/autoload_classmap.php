@@ -6,10 +6,13 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'CreateOwnerProfilesTable' => $baseDir . '/database/migrations/2016_04_26_042313_create_owner_profiles_table.php',
+    'CreateCtrVehiclesTable' => $baseDir . '/database/migrations/2016_05_02_045641_create_ctr_vehicles_table.php',
+    'CreateDriverProfilesTable' => $baseDir . '/database/migrations/2016_05_02_035414_create_driver_profiles_table.php',
+    'CreateDriversTable' => $baseDir . '/database/migrations/2016_05_02_035404_create_drivers_table.php',
+    'CreateOwnerProfilesTable' => $baseDir . '/database/migrations/2016_05_02_034012_create_owner_profiles_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
-    'CreateRequirementsTable' => $baseDir . '/database/migrations/2016_04_25_092729_create_requirements_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
+    'CreateVehiclesTable' => $baseDir . '/database/migrations/2016_05_02_030453_create_vehicles_table.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',
     'File_Iterator' => $vendorDir . '/phpunit/php-file-iterator/src/Iterator.php',
     'File_Iterator_Facade' => $vendorDir . '/phpunit/php-file-iterator/src/Facade.php',

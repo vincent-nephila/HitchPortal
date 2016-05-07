@@ -25,7 +25,7 @@ class MainController extends Controller
                 return view('owner.index',compact('user'));
                 break;
             case env('USER_ADMIN');
-                return view('owner.index',compact('user'));
+                return redirect('/admin');
                 break;        
             case env('USER_DRIVER');
                 return view('owner.index',compact('user'));

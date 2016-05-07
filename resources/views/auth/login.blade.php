@@ -57,6 +57,13 @@
                                                 <div class="form-group">
                                                 </div>   
                                                   
+                                                  @if(count($errors)>0) 
+                                                    @foreach($errors->all() as $error)
+                                                    <li style="text-align:center">{{$error}}</li>
+                                                    @endforeach
+
+                                                    @endif
+                                                  
                                                 </form>
                 </div>
                 <div class="col-md-3">

@@ -1,8 +1,6 @@
-<?php
+@extends('app')
+@section('content')
+You are one step away!
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+We will set an interview with the administrators. Please wait for our email for the date and location.
+@stop
