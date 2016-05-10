@@ -7,7 +7,7 @@
             <tbody>
             @foreach($applicant as $applicants)                     
             <tr class="clickable-row" data-href="/admin/user/{{$applicants->id}}">
-                <td>{{$applicants->id}}</td><td>{{$applicants->lastname}}, {{$applicants->firstname}}{{$applicants->middlename}}</td><td> 
+                <td>{{$applicants->id}}</td><td>{{$applicants->lastname}}, {{$applicants->firstname}} {{$applicants->middlename}}</td><td> 
                 @if ($applicants->status == env('STATUS_OK'))
                     {{$result="OK"}}
                 @endif

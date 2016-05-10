@@ -20,16 +20,15 @@ class AdminController extends Controller
 
     public function ownerApplicationList(){
         $user = \Auth::user();
-        //$applicant = User::where('accesslevel',env('USER_OWNER'));
-        $applicant = User::all();
+        $applicant = User::where('accesslevel',env('USER_OWNER'))->get();
+        //$applicant = User::all();
         return view('admin.index',compact('applicant','user'));
     }    
     
     public function viewApplication($id){
         $applicant = User::find($id);
-        //$pic = Storage::get('DSC_0945.JPG');
-        $pic = storage_path();
-        //Request::move($pic,storage_path());        
+        $profile = \App\OwnerProfile::where('idno',$applicant->id)->first();
+        $pic ='/uploads/owner/'.$profile->picture;
         return view('admin.applicantProfile',compact('applicant','pic'));
         
     }

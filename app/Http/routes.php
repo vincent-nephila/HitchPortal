@@ -38,9 +38,14 @@ Route::group(['middleware' => ['web']], function () {
     Route::auth();
     Route::get('portal','MainController@index');
     
-    Route::post('portal/owner/requirement','Owner\OwnerController@uploadRequirements');  
     Route::get('portal/owner/addVehicle','Owner\OwnerController@addVehicle');
+    Route::post('portal/owner/addVehicle','Owner\OwnerController@saveVehicle');
     
+    Route::get('/portal/owner/addDriver',['middleware' => 'auth',function(){
+        $user = \Auth::user();
+        return view('owner.addDriver',compact('user'));
+    }]);
+    Route::post('/portal/owner/addDriver','Owner\OwnerController@saveDriver');
     Route::get('portal/suspendWarning',['middleware' => 'auth',function(){        
         if(! \Auth::user()->status == env('STATUS_SUSPENDED')){
             return redirect('portal');
@@ -63,8 +68,13 @@ Route::group(['middleware' => ['web']], function () {
             return view('owner.requirement');
         }
 }]);
+Route::post('portal/owner/requirement','Owner\OwnerController@uploadRequirements'); 
+Route::get('/addVehicle/{maker}/model','AjaxController@getModel');
+
 
 });
+
+//Route::get('/addVehicle/{maker}/model','AjaxController@getModel');
 
 
     

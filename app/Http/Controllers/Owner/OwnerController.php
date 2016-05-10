@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use Illuminate\Http\Request;
-use App\OwnerProfile;
+
 use App\User;
 
 
@@ -15,7 +15,7 @@ class OwnerController extends Controller
 {
     public function __construct() {
         $this->middleware('auth');
-        $this->middleware('status');
+        //$this->middleware('status');
         
         //if (Auth::user()->accesslevel == env('USER_OWNER')){
         //    return redirect('/');
@@ -25,6 +25,8 @@ class OwnerController extends Controller
     
     
     public function uploadRequirements(Request $request){
+        
+        
         $this->validate($request, [
             'bdate' => 'required|date',
             'address' => 'required|max:255',
@@ -48,11 +50,11 @@ class OwnerController extends Controller
         $id1Ext = $request->file('id1')->getClientOriginalExtension();
         $id2Ext = $request->file('id2')->getClientOriginalExtension();
 
-        $request->file('picture')->move(storage_path('app/public'),$picture.'.'.$pictureExt);
-        $request->file('id1')->move(storage_path('app/public'),$id1.'.'.$id1Ext);
-        $request->file('id2')->move(storage_path('app/public'),$id2.'.'.$id2Ext);
+        $request->file('picture')->move(public_path().'/uploads/owner',$picture.'.'.$pictureExt);
+        $request->file('id1')->move(public_path().'/uploads/owner',$id1.'.'.$id1Ext);
+        $request->file('id2')->move(public_path().'/uploads/owner',$id2.'.'.$id2Ext);
         
-        $profile = new OwnerProfile;
+        $profile = new \App\OwnerProfile;
         $profile->idno = \Auth::user()->id;
         $profile->birthDate = $request->bdate;
         $profile->address = $request->address;
@@ -141,6 +143,8 @@ class OwnerController extends Controller
         $driver->extname = $request->ext;
         $driver->mobile = $request->mobile;
         $driver->email = $request->email;
+        $driver->acctStatus = 0;
+        $driver->status = 0;
         $driver->save();
         /*
         $driverProfile = new \App\DriverProfile;

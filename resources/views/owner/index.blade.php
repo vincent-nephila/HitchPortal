@@ -1,1 +1,4 @@
-{{$user->id}} owner
+@extends('own')
+@section('content')
+
+@stop

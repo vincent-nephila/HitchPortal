@@ -8,8 +8,7 @@
             <tbody>
                
             @foreach($applicant as $applicants)
-            <tr><td>{{$applicants->id}}</td><td>{{$applicants->lastname}}, {{$applicants->firstname}}
-                    {{$applicants->extensionname}}</td><td>view</td></tr>
+            <tr><td>{{$applicants->id}}</td><td>{{$applicants->lastname}}, {{$applicants->firstname}}, {{$applicants->gabilo}}</td><td>view</td></tr>
             @endforeach
             </tbody>
             </table>

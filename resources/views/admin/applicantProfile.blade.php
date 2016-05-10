@@ -1,5 +1,8 @@
 @extends('admin')
 @section('content')
-{{$pic}}
+{{$applicant->lastname}},{{$applicant->firstname}}<br>
+Mobile:{{$applicant->mobile}}
+
+<img src="{{url($pic)}}">
 
 @stop

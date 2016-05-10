@@ -7,7 +7,7 @@
         <script src="{{ asset('/bootstrap/dist/js/bootstrap.js') }}"></script>
         <script src="{{ asset('/jquery/dist/jquery.js') }}"></script>
         <script src="{{ asset('/jquery/dist/jquery.slim.js') }}"></script>
-        
+       
     </head>
     
     <body>
@@ -18,19 +18,22 @@
                     <form method="POST" action="{{url('portal/owner/requirement')}}" enctype="multipart/form-data">
                         {!!csrf_field()!!}                  
                         <fieldset class="form-group">
-                            <input id="input-1" type="date" class="form-control" name="bdate" placeholder="Birth Date">
+                            <input type="date"  class="form-control" name="bdate" placeholder="Birth Date">
                         </fieldset>
                         <fieldset class="form-group">                   
-                            <input id="input-1" type="text" class="form-control" name="address" placeholder="Address">
+                            <input type="text" class="form-control" name="address" placeholder="Address">
                         </fieldset>
-                        <fieldset class="form-group">                   
-                            <input id="input-1" type="file" name="picture" class="form-control" placeholder="2x2 Picture">
+                        <fieldset class="form-group"> 
+                            <label>2x2 Picture</label>
+                            <input type="file" name="picture" class="form-control" placeholder="2x2 Picture">
                         </fieldset>
-                        <fieldset class="form-group">                   
-                            <input id="input-1" type="file" name="id1" class="form-control" placeholder="Valid ID 1">
+                        <fieldset class="form-group">   
+                            <label>1st Valid Id</label>
+                            <input type="file" name="id1" class="form-control" placeholder="Valid ID 1">
                         </fieldset>
-                        <fieldset class="form-group">                   
-                            <input id="input-1" type="file" name="id2" class="form-control" placeholder="Valid ID 2">
+                        <fieldset class="form-group">   
+                            <label>2nd Valid Id</label>
+                            <input type="file" name="id2" class="form-control" placeholder="Valid ID 2">
                         </fieldset>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
