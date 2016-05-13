@@ -10,19 +10,13 @@
         <script src="{{ asset('/jquery/dist/jquery.js') }}"></script>
         <script src="{{ asset('/jquery/dist/jquery.slim.js') }}"></script>
         
-
-        
-        
-        
- 
-        
   <script src="script.js"></script>
         
     </head>
     <body>
-        <div id='cssmenu'>
+        
             
-            <nav role="navigation" class="navbar navbar-default" style = "border:none;">
+            <div role="navigation" class="navbar navbar-default" style = "border:none;" id='cssmenu'>
         
         <div class="navbar-header">
             <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
@@ -33,7 +27,7 @@
             </button>
         </div> 
                 
-               <div id="navbarCollapse" class="collapse navbar-collapse">
+               <div id="navbarCollapse" class="navbar-collapse collapse ">
                         <ul class="nav navbar-nav">
                         <li><a href='/'style="background-color: #f96e5b;"><span>Home</span></a></li>
                         <!--<li><a href='#'><span>Company</span></a></li>
@@ -44,8 +38,8 @@
                         <li><a href ="login" style="background-color: #f96e5b;" >Log In</a></li>
                         </ul>
                 </div>         
-            </nav>
-    </div>
+            </div>
+    
         <!-- <div class="container_fluid"> -->
             @yield('content')
         <!--</div>-->

@@ -1,9 +1,6 @@
 <?php
 
 return [
-'fileDestinationPath' => 'uplaods',
-'allowedFileTypes' => 'jpg,jpeg,bmp,png',
-'maxFileSize' => 1000,
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -28,7 +25,8 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => true,
+    //env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------

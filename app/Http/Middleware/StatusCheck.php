@@ -17,7 +17,11 @@ class StatusCheck
     public function handle($request, Closure $next)
     {
         if(Auth::user()->status == env('STATUS_PROCESS')){
-            return redirect('portal/owner/requirement');
+            $profile = \App\OwnerProfile::where('idno',Auth::user()->id)->first();
+            if($profile == null){
+                return redirect('portal/owner/requirement');
+            }
+                return redirect('portal/owner/addVehicle');
         }
         if(Auth::user()->status == env('STATUS_APPROVAL')){
             return redirect('portal/owner/approval');

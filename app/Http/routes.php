@@ -45,36 +45,47 @@ Route::group(['middleware' => ['web']], function () {
         $user = \Auth::user();
         return view('owner.addDriver',compact('user'));
     }]);
+    
     Route::post('/portal/owner/addDriver','Owner\OwnerController@saveDriver');
     Route::get('portal/suspendWarning',['middleware' => 'auth',function(){        
-        if(! \Auth::user()->status == env('STATUS_SUSPENDED')){
+        if( \Auth::user()->status != env('STATUS_SUSPENDED')){
             return redirect('portal');
         }
         else{
         return view('suspended');
         }
         }]);
-    Route::get('portal/owner/approval',['middleware' => 'auth',function(){        if(! \Auth::user()->status == env('STATUS_APPROVAL')){
+        
+    Route::get('portal/owner/approval',['middleware' => 'auth',function(){        
+        if( \Auth::user()->status != env('STATUS_APPROVAL')){
             return redirect('portal');
         }
         else{
         return view('owner.approval');
         }}]);
+        
     Route::get('portal/owner/requirement',['middleware' => 'auth',function(){        
-        if(! \Auth::user()->status == env('STATUS_PROCESS')){
+        if( \Auth::user()->status != env('STATUS_PROCESS')){
             return redirect('portal');
         }
         else{
             return view('owner.requirement');
         }
-}]);
-Route::post('portal/owner/requirement','Owner\OwnerController@uploadRequirements'); 
-Route::get('/addVehicle/{maker}/model','AjaxController@getModel');
-
-
+        
+    }]);
+    Route::post('portal/owner/requirement','Owner\OwnerController@uploadRequirements'); 
+    
+    Route::get('/changeStat',function(){
+                $user = \App\User::find(\Auth::user()->id);
+        $user->status = 1;
+        $user->save();
+        
+        return redirect('portal/owner/approval');   
+    });
 });
 
-//Route::get('/addVehicle/{maker}/model','AjaxController@getModel');
+Route::get('/addVehicle/{maker}','AjaxController@getModel');
+//Route::get('/changeStat','Owner\OwnerController@changeStatus');
 
 
     

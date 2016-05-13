@@ -7,35 +7,39 @@
         
         
         <script src="{{ asset('/bootstrap/dist/js/bootstrap.js') }}"></script>
-        <script src="{{ asset('/jquery/dist/jquery.js') }}"></script>
+        <!--script src="{{ asset('jquery.js') }}"></script-->
         <script src="{{ asset('/jquery/dist/jquery.slim.js') }}"></script>
+        <script src="{{ asset('/jquery/dist/jquery.js') }}"></script>
         
-        
- 
-        <script src="script.js"></script>
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+      <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+      <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+
+       <script>
+      $(function() {
+        $( "#datepicker" ).datepicker();
+        $( "#datepicker2" ).datepicker();
+      });
+      </script>
+
         
     </head>
     
-    <body>
-                <div class="container-fluid">
-
-            <div class="col-md-4" style="background-color: grey;color:black;height: 100vh;">
-                <div >{{$user->firstname}} {{$user->lastname}}</div>
+    <body style="margin-bottom: 0px;">
+        <div class="container-fluid" style="padding-left: 0px;padding-right: 0px;">
+            <div class="col-md-3" style="background-color: #e65c00;color:black;height: 100vh;padding-left: 0px;padding-right: 0px">                
+                <div>
+                    {!!$menu!!}
+                </div>
+                <a href='{{url('/logout')}}'><div>Logout</div></a>
                 <hr>
-                <a href="{{url('/portal/owner/addVehicle')}}"><div>New Vehicle</div></a>
-                <hr>
-                <a href="{{url('/portal/owner/addDriver')}}"><div>New Driver</div></a>
-                <hr>
-                <div>Buy Points</div>
-                <hr>
-                <div>Transactions / Travels</div>
-                <hr>
-                <div>Logout</div>
             </div>
-            <div class="col-md-8">
-                @yield('content')
+            <div class="col-md-9" style="height:100vh;overflow-x:hidden;overflow-y:scroll;">
+@yield('content')
             </div>
         </div>
+
     </body>
     
 </html>
