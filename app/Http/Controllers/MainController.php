@@ -13,6 +13,25 @@ class MainController extends Controller
         $this->middleware('auth');
         $this->middleware('status',['except'=>['redirectRequirement','redirectApproval','redirectSuspended']]);
     }
+
+    public function ownerMenuRenderer(){
+        $user = \Auth::user();
+        $vehicle = \App\Vehicle::where('idno',$user->id)->first();
+        $driver = \App\Driver::where('owner_id',$user->id)->first();
+        
+        $content = '<hr>';
+                $content = $content.'<a href="/portal/owner/addVehicle"><div class="menu-item">Register Vehicle</div></a>';
+                $content = $content.'<hr>';
+
+                $content = $content.'<a href="/portal/owner/addDriver"><div class="menu-item">Register Driver</div></a>';
+                $content = $content.'<hr>';  
+            
+                $content = $content.'<a href="/Trip"><div class="menu-item">Create a Trip</div></a>';
+                $content = $content.'<hr>';                
+
+        
+        return $content;
+    }
     
     public function index(){
         $accesslevel = \Auth::user()->accesslevel;
@@ -22,7 +41,8 @@ class MainController extends Controller
                 return view('passenger.index',compact('user'));
                 break;
             case env('USER_OWNER');
-                return view('owner.index',compact('user'));
+                $menu=$this->ownerMenuRenderer();
+                return view('owner.index',compact('user','menu'));
                 break;
             case env('USER_ADMIN');
                 return redirect('/admin');

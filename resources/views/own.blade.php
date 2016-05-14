@@ -4,10 +4,11 @@
         <link href="{{ asset('/bootstrap/dist/css/bootstrap.css') }}" rel="stylesheet">
         <link href="{{ asset('/css/custom.css') }}" rel="stylesheet">
         <!--link rel="stylesheet" href= "{{asset('/css/layout.css')}}"-->
+        <link href="{{ asset('/timepicker/js/bootstrap-timepicker.css') }}"></link>
         
         
         <script src="{{ asset('/bootstrap/dist/js/bootstrap.js') }}"></script>
-        <!--script src="{{ asset('jquery.js') }}"></script-->
+        <script src="{{ asset('/timepicker/js/bootstrap-timepicker.min.js') }}"></script>
         <script src="{{ asset('/jquery/dist/jquery.slim.js') }}"></script>
         <script src="{{ asset('/jquery/dist/jquery.js') }}"></script>
         
@@ -20,6 +21,7 @@
       $(function() {
         $( "#datepicker" ).datepicker();
         $( "#datepicker2" ).datepicker();
+        
       });
       </script>
 

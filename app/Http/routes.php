@@ -13,8 +13,12 @@
 
 Route::group(['middleware' => ['web']], function () {
     //Guest Routes
-    Route::get('/',['middleware' => 'guest',function(){return view('main');}]);
+    //Route::get('/',['middleware' => 'guest',function(){return view('main');}]);
+    Route::get('/',['middleware' => 'guest',function(){return Redirect::to('http://hitchcms.nephilaweb.com.ph');}]);
     Route::get('congratulation',['middleware' => 'guest',function(){return view('congratulation');}]);
+    //Common user Routes
+    Route::auth();
+    Route::get('portal','MainController@index');    
     
     
     //Registration
@@ -32,21 +36,17 @@ Route::group(['middleware' => ['web']], function () {
        
     //Password Reset
     Route::get('password/email', 'Auth\PasswordController@getEmail');
-    Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
+    Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');    
     
-    //Common user Routes
-    Route::auth();
-    Route::get('portal','MainController@index');
-    
+   //Authenticated Users
     Route::get('portal/owner/addVehicle','Owner\OwnerController@addVehicle');
     Route::post('portal/owner/addVehicle','Owner\OwnerController@saveVehicle');
     
-    Route::get('/portal/owner/addDriver',['middleware' => 'auth',function(){
-        $user = \Auth::user();
-        return view('owner.addDriver',compact('user'));
-    }]);
-    
+    Route::get('/portal/owner/addDriver','Owner\OwnerController@addDriver');   
     Route::post('/portal/owner/addDriver','Owner\OwnerController@saveDriver');
+    
+    Route::get('/portal/owner/createTrip','Owner\OwnerController@createTrip');   
+    
     Route::get('portal/suspendWarning',['middleware' => 'auth',function(){        
         if( \Auth::user()->status != env('STATUS_SUSPENDED')){
             return redirect('portal');
@@ -82,10 +82,12 @@ Route::group(['middleware' => ['web']], function () {
         
         return redirect('portal/owner/approval');   
     });
+    
+    
 });
 
 Route::get('/addVehicle/{maker}','AjaxController@getModel');
-//Route::get('/changeStat','Owner\OwnerController@changeStatus');
 
+Route::get('/approve/{applicant}','AjaxController@changeOwnerStat');
 
     

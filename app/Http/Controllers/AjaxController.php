@@ -20,4 +20,12 @@ class AjaxController extends Controller
         return $value;
     }
     }
+    
+    public function changeOwnerStat($applicant){
+    if(Request::ajax()){
+        $user = \App\User::find($applicant);
+        $user->status = 2;
+        return "Approved";
+    }
+    }
 }

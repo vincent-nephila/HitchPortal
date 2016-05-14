@@ -45,7 +45,7 @@
                     <fieldset class="form-group">                   
                             <label class="control-label col-md-2">License No.</label>
                             <div class="col-md-10">                         
-                                <input type="text" class="form-control" name="licenseNo" >
+                                <input type="text" class="form-control" name="licNo" >
                             </div>
                     </fieldset>          
                     <fieldset class="form-group">

@@ -27,7 +27,7 @@
                <div class="panel panel-default register" style="background-color: #fd6a62/*rgba(0,0,0,0.5)*/; border-radius: 30px; border: none; ">
                <div class="panel-body" style="background-color:none;">
                     <h3 style="color: #ffffff; font-family: Open Sans; margin:0 0 0 0;">SIGN-UP AS</h3>
-                    <h1 style="color: #ffffff; font-family: Open Sans; margin:0 0 5px 15px;">OWNER</h1>
+                    <h1 style="color: #ffffff; font-family: Open Sans; margin:0 0 5px 15px;">PASSENGER</h1>
                     <form method="POST" action="{{url('registerPassenger')}}">
                     {!!csrf_field()!!}
                     <fieldset class="form-group">

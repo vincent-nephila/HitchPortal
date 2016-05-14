@@ -6,11 +6,15 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'CreateCtrRoutesTable' => $baseDir . '/database/migrations/2016_05_14_062016_create_ctr_routes_table.php',
     'CreateCtrVehiclesTable' => $baseDir . '/database/migrations/2016_05_02_045641_create_ctr_vehicles_table.php',
     'CreateDriverProfilesTable' => $baseDir . '/database/migrations/2016_05_02_035414_create_driver_profiles_table.php',
     'CreateDriversTable' => $baseDir . '/database/migrations/2016_05_02_035404_create_drivers_table.php',
     'CreateOwnerProfilesTable' => $baseDir . '/database/migrations/2016_05_02_034012_create_owner_profiles_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
+    'CreateReservationsTable' => $baseDir . '/database/migrations/2016_05_14_063036_create_reservations_table.php',
+    'CreateSeatsTable' => $baseDir . '/database/migrations/2016_05_14_064249_create_seats_table.php',
+    'CreateTripsTable' => $baseDir . '/database/migrations/2016_05_14_062531_create_trips_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'CreateVehiclesTable' => $baseDir . '/database/migrations/2016_05_02_030453_create_vehicles_table.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',

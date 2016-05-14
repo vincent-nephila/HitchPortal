@@ -14,7 +14,7 @@ class OwnerController extends Controller
 {
     public function __construct() {
         $this->middleware('auth');
-        $this->middleware('status',['except' => ['uploadRequirements','addVehicle','saveVehicle','saveDriver']]);
+        $this->middleware('status',['except' => ['uploadRequirements','addVehicle','saveVehicle','saveDriver','addDriver']]);
         
         //if (Auth::user()->accesslevel == env('USER_OWNER')){
         //    return redirect('/');
@@ -28,14 +28,14 @@ class OwnerController extends Controller
         
         $content = '<hr>';
         if($user->status==env('STATUS_PROCESS')){
-            if($vehicle == null){
+
                 $content = $content.'<a href="/portal/owner/addVehicle"><div class="menu-item">Register Vehicle</div></a>';
                 $content = $content.'<hr>';
-            }
-            if($driver == null){
+
+            
                 $content = $content.'<a href="/portal/owner/addDriver"><div class="menu-item">Register Driver</div></a>';
                 $content = $content.'<hr>';
-            }        
+            
             if(($driver != null)&&($vehicle != null)){
                 $content = $content.'<a href="/changeStat"><div class="menu-item">Set me a schedule</div></a>';
                 $content = $content.'<hr>';                
@@ -44,7 +44,7 @@ class OwnerController extends Controller
         
         return $content;
     }
-    
+     
     public function uploadRequirements(Request $request){
         $this->validate($request, [
             'bdate' => 'required|date',
@@ -53,14 +53,7 @@ class OwnerController extends Controller
             'id1' => 'required|mimes:jpeg,png,pdf',
             'id2' => 'required|mimes:jpeg,png,pdf',
             
-        ]);
-        /*
-        if ($validator->fails()) {
-            $this->throwValidationException(
-                $request, $validator
-            );
-        }
-          */              
+        ]);          
         
         $time = strtotime($request->bdate);
         $newformat = date('Y-m-d',$time);
@@ -90,16 +83,14 @@ class OwnerController extends Controller
         $user->status = 1;
         $user->save();
         */
-        return redirect('portal/owner/addDriver');
+        return redirect('/portal/owner/addDriver');
              
     }
     
     public function addVehicle(){
         
         $user = \Auth::user();
-        $vehicle = \App\Vehicle::where('idno',$user->id)->count();
-        
-       
+        $vehicle = \App\Vehicle::where('idno',$user->id)->count();      
         $result = DB::Select('select distinct maker from ctr_vehicles;');
         $menu = $this->menuRenderer();
        if(((\Auth::user()->status == env('STATUS_PROCESS'))&&($vehicle == 0))||(\Auth::user()->status == env('STATUS_OK'))){
@@ -109,6 +100,21 @@ class OwnerController extends Controller
            return view('own',compact('menu','user'));
        }
     }
+    
+    public function addDriver(){
+        $user = \Auth::user();
+        $menu = $this->menuRenderer();
+        $driver = \App\Driver::where('owner_id',$user->id)->count();      
+       if(((\Auth::user()->status == env('STATUS_PROCESS'))&&($driver == 0))||(\Auth::user()->status == env('STATUS_OK'))){
+        return view('owner.addDriver',compact('user','menu'));
+       }
+       else{
+           return view('own',compact('user','menu'));
+       }
+        
+        
+    }
+    
     public function saveVehicle(Request $request){
         $this->validate($request, [
             'plateNo' => 'required|max:7',
@@ -120,7 +126,7 @@ class OwnerController extends Controller
             'side' => 'required|mimes:jpg,jpeg,png',
             'back' => 'required|mimes:jpg,jpeg,png',
             
-        ]);        
+        ]);
         
         $reg = \Auth::user()->id.'-'.str_random(5);
         $insr = \Auth::user()->id.'-'.str_random(5);
@@ -166,7 +172,7 @@ class OwnerController extends Controller
             'email' => 'required|email|max:255|unique:drivers',
             'bdate' => 'required|date',
             'address' => 'required|max:255',
-            'licenseNo' => 'required|max:20',
+            'licNo' => 'required|max:20|unique:driver_profiles',
             'licExpDate'=> 'required|date',
             'lic' => 'required|mimes:jpeg,png,pdf',
             'nbi' => 'required|mimes:jpeg,png,pdf',
@@ -196,7 +202,7 @@ class OwnerController extends Controller
         $driverProfile->idno = $driver->id;     
         $driverProfile->birthDate = $newformat1;          
         $driverProfile->address = $request->address;  
-        $driverProfile->licNo = $request->licenseNo;
+        $driverProfile->licNo = $request->licNo;
         $driverProfile->licExp = $newformat2;          
         
         if ($request->hasFile('lic')) {
@@ -221,8 +227,14 @@ class OwnerController extends Controller
         }            
         $driverProfile->save();
 
-        return "Hello";
+        return redirect('portal/owner/addDriver');
         
+    }
+    
+    public function createTrip(){
+        $route = DB::Select('select * from ctr_routes order by destinationPoint,startPoint;');
+        $menu = $this->menuRenderer();
+        return view('owner.createTrip',compact('route','menu'));
     }
 }
 
