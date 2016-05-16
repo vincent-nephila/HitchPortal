@@ -21,7 +21,7 @@ class StatusCheck
             if($profile == 0){
                 return redirect('portal/owner/requirement');
             }
-                return redirect('portal/owner/addVehicle');
+                return redirect('portal/owner/vehicle');
         }
         if(Auth::user()->status == env('STATUS_APPROVAL')){
             return redirect('portal/owner/approval');

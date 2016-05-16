@@ -14,7 +14,7 @@ class OwnerController extends Controller
 {
     public function __construct() {
         $this->middleware('auth');
-        $this->middleware('status',['except' => ['uploadRequirements','addVehicle','saveVehicle','saveDriver','addDriver']]);
+        $this->middleware('status',['except' => ['addRequirements','uploadRequirements','addVehicle','saveVehicle','saveDriver','addDriver','listVehicle','listDriver']]);
         
         //if (Auth::user()->accesslevel == env('USER_OWNER')){
         //    return redirect('/');
@@ -23,28 +23,45 @@ class OwnerController extends Controller
     
     public function menuRenderer(){
         $user = \Auth::user();
+        $userProfile = \App\OwnerProfile::where('idno',$user->id)->count();
         $vehicle = \App\Vehicle::where('idno',$user->id)->first();
         $driver = \App\Driver::where('owner_id',$user->id)->first();
         
         $content = '<hr>';
-        if($user->status==env('STATUS_PROCESS')){
+        if((($user->status==env('STATUS_PROCESS'))&&($userProfile >=1))||($user->status==env('STATUS_OK'))){
 
-                $content = $content.'<a href="/portal/owner/addVehicle"><div class="menu-item">Register Vehicle</div></a>';
+                $content = $content.'<a href="/portal/owner/vehicle"><div class="menu-item">Register Vehicle</div></a>';
                 $content = $content.'<hr>';
 
             
-                $content = $content.'<a href="/portal/owner/addDriver"><div class="menu-item">Register Driver</div></a>';
+                $content = $content.'<a href="/portal/owner/driver"><div class="menu-item">Register Drivers</div></a>';
                 $content = $content.'<hr>';
             
-            if(($driver != null)&&($vehicle != null)){
+            if(($driver != null)&&($vehicle != null)&&($user->status==env('STATUS_PROCESS'))){
                 $content = $content.'<a href="/changeStat"><div class="menu-item">Set me a schedule</div></a>';
                 $content = $content.'<hr>';                
             }
         }
+        if($user->status==env('STATUS_OK')){
+                $content = $content.'<a href="/portal/owner/createTrip"><div class="menu-item">Create a Trips</div></a>';
+                $content = $content.'<hr>';
+        }
+        
         
         return $content;
     }
      
+    public function addRequirements(){
+        $menu = $this->menuRenderer();
+        $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
+        if( \Auth::user()->status == env('STATUS_PROCESS')&&($profile != 0)){
+            return redirect('portal');
+        }
+        else{
+            return view('owner.requirement',compact('menu'));
+        }
+    }
+    
     public function uploadRequirements(Request $request){
         $this->validate($request, [
             'bdate' => 'required|date',
@@ -87,29 +104,65 @@ class OwnerController extends Controller
              
     }
     
+    public function listVehicle(){
+        $menu = $this->menuRenderer();
+        $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
+        $vehicleCount = \App\Vehicle::where('idno',\Auth::user()->id)->count();
+        $vehicle = \App\Vehicle::where('idno',\Auth::user()->id)->get();
+        if($profile == 0){
+            return redirect('/');
+        }
+        else{
+            if ($vehicleCount >=1){
+            return view('owner.vehicleList',compact('menu','vehicle'));
+            }
+            else{
+                return redirect('portal/owner/addVehicle');
+            }
+        }
+    }
+    
     public function addVehicle(){
         
         $user = \Auth::user();
-        $vehicle = \App\Vehicle::where('idno',$user->id)->count();      
+        $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
         $result = DB::Select('select distinct maker from ctr_vehicles;');
         $menu = $this->menuRenderer();
-       if(((\Auth::user()->status == env('STATUS_PROCESS'))&&($vehicle == 0))||(\Auth::user()->status == env('STATUS_OK'))){
+       if($profile >= 1){
         return view('owner.addVehicle',compact('result','menu','user'));
        }
        else{
-           return view('own',compact('menu','user'));
+           return redirect('/');
        }
     }
+    
+    public function listDriver(){
+        $menu = $this->menuRenderer();
+        $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
+        $driverCount = \App\Driver::where('owner_id',\Auth::user()->id)->count();
+        if($profile == 0){
+            return redirect('portal');
+        }
+        else{
+            if ($driverCount >=0){
+            $driver = \App\Driver::where('owner_id',\Auth::user()->id)->get();                
+            return view('owner.driverList',compact('menu','driver'));
+            }
+            else{
+                return redirect('portal/owner/addDriver');
+            }
+        }
+    }    
     
     public function addDriver(){
         $user = \Auth::user();
         $menu = $this->menuRenderer();
-        $driver = \App\Driver::where('owner_id',$user->id)->count();      
-       if(((\Auth::user()->status == env('STATUS_PROCESS'))&&($driver == 0))||(\Auth::user()->status == env('STATUS_OK'))){
+        $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
+       if($profile >= 0){
         return view('owner.addDriver',compact('user','menu'));
        }
        else{
-           return view('own',compact('user','menu'));
+           return redirect('/');
        }
         
         
@@ -118,6 +171,7 @@ class OwnerController extends Controller
     public function saveVehicle(Request $request){
         $this->validate($request, [
             'plateNo' => 'required|max:7',
+            'maker' => 'required|max:255',
             'model' => 'required|max:255',
             'color' => 'required|max:255',
             'registration' => 'required|mimes:jpg,jpeg,png',
@@ -149,6 +203,7 @@ class OwnerController extends Controller
         $vehicle = new \App\Vehicle;
         $vehicle->idno = \Auth::user()->id;
         $vehicle->vePlateNo = $request->plateNo;
+        $vehicle->veMaker = $request->maker;
         $vehicle->veModel = $request->model;
         $vehicle->veColor = $request->color;
         $vehicle->veRegistration = $reg.'.'.$regExt;
@@ -160,8 +215,10 @@ class OwnerController extends Controller
         $vehicle->save();
         
         
-        return redirect('portal/owner/addVehicle');
+        return redirect('portal/owner/addVehicle')->with('success', "New vehicle added.");
     }
+    
+    
     
     public function saveDriver(Request $request){
         $this->validate($request, [
@@ -227,14 +284,70 @@ class OwnerController extends Controller
         }            
         $driverProfile->save();
 
-        return redirect('portal/owner/addDriver');
+        return redirect('portal/owner/driver')->with('success', "New driver added.");
         
     }
     
     public function createTrip(){
+        $user = \Auth::user();
         $route = DB::Select('select * from ctr_routes order by destinationPoint,startPoint;');
+
+        $matchfields=['idno'=>$user->id,'veApproved'=>env('VEHICLE_APPROVED'),'veStatus'=>0];
+        $vehicle=\App\Vehicle::where($matchfields)->get();  
+        
+        $matchfield2=['owner_id'=>$user->id,'acctStatus'=>1,'status'=>1];
+        $drivers=\App\Driver::where($matchfield2)->get();  
+        
+        
         $menu = $this->menuRenderer();
-        return view('owner.createTrip',compact('route','menu'));
+        return view('owner.createTrip',compact('route','menu','vehicle','drivers'));
+    }
+    
+    public function saveTrip(Request $request){
+        $this->validate($request, [
+            'route' => 'required|max:255',
+            'date' => 'required|date',
+            'time' => 'required|max:20',
+            'vehicle' => 'required|max:255',
+            'driver' => 'required|max:255',
+            
+        ]);        
+        $date = strtotime($request->date);
+        $newformat = date('Y-m-d',$date);        
+        
+        $time = strtotime($request->time);
+        $timeformat = date('H:i',$time); 
+        
+        $vehicle = \App\Vehicle::find($request->vehicle);
+        $driver = \App\Driver::find($request->driver);
+        
+        $trip = new \App\Trip;
+        $trip->idno = \Auth::user()->id;
+        $trip->route = $request->route;
+        $trip->vehicle_id = $request->vehicle;
+        $trip->driver_id = $request->driver;
+        $trip->seats = $vehicle->veSeats;
+        $trip->date = $newformat;
+        $trip->time = $timeformat;
+        $trip->save();
+        $seatno = 1;
+        
+        while($seatno <= $vehicle->veSeats){
+            $seats = new \App\Seat;
+            $seats->tripId = $trip->id;
+            $seats->seatno = $seatno;
+            $seats->available = 1;
+            $seats->save();
+            
+            $seatno = $seatno+1;
+        }
+        
+        $vehicle->veStatus= 1;
+        $vehicle->save();
+        
+        $driver->status = 2;
+        $driver->save();
+        return $vehicle->veSeats;
     }
 }
 

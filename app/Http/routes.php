@@ -31,21 +31,30 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('registerPassenger',['middleware' => 'guest',function(){return view('passenger.register');}]);
     Route::post('registerPassenger','Auth\RegisterController@registerPassenger');
     
-    Route::get('/admin','Admin\AdminController@ownerApplicationList');
-    Route::get('/admin/user/{id}','Admin\AdminController@viewApplication');
+    Route::get('/admin','Admin\AdminController@completeList');
+    Route::get('/admin/user/{id}','Admin\AdminController@ownerApplication');
+    Route::get('/admin/driver/{id}','Admin\AdminController@driverApplication');
+    Route::get('/admin/vehicle/{id}','Admin\AdminController@vehicleApplication');
        
     //Password Reset
     Route::get('password/email', 'Auth\PasswordController@getEmail');
     Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');    
     
    //Authenticated Users
+    
+    Route::get('portal/owner/vehicle','Owner\OwnerController@listVehicle');
     Route::get('portal/owner/addVehicle','Owner\OwnerController@addVehicle');
     Route::post('portal/owner/addVehicle','Owner\OwnerController@saveVehicle');
     
+    Route::get('portal/owner/driver','Owner\OwnerController@listDriver');
     Route::get('/portal/owner/addDriver','Owner\OwnerController@addDriver');   
     Route::post('/portal/owner/addDriver','Owner\OwnerController@saveDriver');
     
-    Route::get('/portal/owner/createTrip','Owner\OwnerController@createTrip');   
+    Route::get('/portal/owner/createTrip','Owner\OwnerController@createTrip');
+    Route::post('/portal/owner/createTrip','Owner\OwnerController@saveTrip');
+    
+    Route::get('/passenger/reservation','Passenger\PassengerController@makeReservation');
+    Route::post('/passenger/reservation','Passenger\PassengerController@saveReservation');
     
     Route::get('portal/suspendWarning',['middleware' => 'auth',function(){        
         if( \Auth::user()->status != env('STATUS_SUSPENDED')){
@@ -64,15 +73,7 @@ Route::group(['middleware' => ['web']], function () {
         return view('owner.approval');
         }}]);
         
-    Route::get('portal/owner/requirement',['middleware' => 'auth',function(){        
-        if( \Auth::user()->status != env('STATUS_PROCESS')){
-            return redirect('portal');
-        }
-        else{
-            return view('owner.requirement');
-        }
-        
-    }]);
+    Route::get('portal/owner/requirement','Owner\OwnerController@addRequirements');
     Route::post('portal/owner/requirement','Owner\OwnerController@uploadRequirements'); 
     
     Route::get('/changeStat',function(){
@@ -82,12 +83,14 @@ Route::group(['middleware' => ['web']], function () {
         
         return redirect('portal/owner/approval');   
     });
-    
+    Route::get('/findseat/{trip}','AjaxController@showSeats');
     
 });
 
 Route::get('/addVehicle/{maker}','AjaxController@getModel');
+Route::get('/findtrip/{destination}','AjaxController@showTrips');
 
 Route::get('/approve/{applicant}','AjaxController@changeOwnerStat');
-
+Route::get('/approveDriver/{applicant}','AjaxController@changeDriverStat');
+Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
     

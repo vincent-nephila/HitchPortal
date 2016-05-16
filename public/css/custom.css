@@ -32,3 +32,13 @@ body{
     margin: 10px 20px;
     color: white;
 }
+
+.option{
+    cursor: pointer;
+}
+
+
+.selected {
+    background-color: brown;
+    color: #FFF;
+}

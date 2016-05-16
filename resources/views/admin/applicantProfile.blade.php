@@ -11,8 +11,9 @@
     <div>Mobile: {{$applicant->mobile}}</div>
     <br>
 @if($applicant->status == env('STATUS_APPROVAL'))
-<button class='btn btn-success' onclick="approve({{$applicant->id}})"><div id='status'>Approve</div></button>
+<button class='btn btn-success' onclick="approve({{$applicant->id}})"><div id="status">Approve</div></button>
 @endif
+   
 </div>
 <div>
     <table class="table">
@@ -71,7 +72,7 @@
 </div>
 <script>
 function approve(applicant){
-    //document.getElementById("status").innerHTML = applicant;
+   // document.getElementById("status").innerHTML = applicant;
     $.ajax({
         type:"GET",
         url:"/approve/"+applicant,

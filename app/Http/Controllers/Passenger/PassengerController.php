@@ -8,43 +8,56 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Input;
-
+use DB;
 class PassengerController extends Controller
 {
-    //
-    public function register(Request $request){
+    public function menuRenderer(){
+        $user = \Auth::user();
+
         
+        $content = '<hr>';
+
+        
+        
+        return $content;
+    }    
+    
+    public function makeReservation(){
+                $user = \Auth::user();
+                $route = DB::Select('select distinct destinationPoint from ctr_routes');
+                $menu = $this->menuRenderer();
+                return view('passenger.makeReservation',compact('user','route','menu'));
+    }
+    
+    public function saveReservation(Request $request){
         $this->validate($request, [
-            'firstname' => 'required|max:255',
-            'middlename' => 'required|max:255',
-            'lastname' => 'required|max:255',
-            'mobile' => 'required|max:12',
-            'email' => 'required|email|max:255|unique:users',
-            
-        ]);   
-       
-        $authkey = str_random(30);
+            'trip' => 'required',
+            'seat' => 'required',
+            ]);
+        $user = \Auth::user();
+        $reserve = new \App\Reservation;
+        $reserve->idno = $user->id;
+        $reserve->reservedTrip = $request->trip;
+        $reserve->reservedSeat = $request->seat;
+        
+        $matchfields=['tripId'=>$request->trip,'seatno'=>$request->seat];
+        $seat = \App\Seat::where($matchfields)->first();
+        $seat->available = 0;
+        
+        $trip = \App\Trip::find($request->trip);
+        $seatAva = $trip->seats - 1;
+        $trip->seats = $trip->seats - 1;
         
         
+        if($trip->seats == 0){
+            return "not saved";
+        }
         
-        $user = new User;
-        $user->firstname = $request->firstname;
-        $user->lastname = $request->lastname;
-        $user->middlename = $request->middlename;
-        $user->email = $request->email;
-        $user->mobile = $request->mobile;
-        $user->status = env('STATUS_OK');
-        $user->accesslevel = env('USER_PASSENGER');
-        $user->confirmation_code=$authkey;
-        $user->save();
+        $reserve->save();
+        $seat->save();
+        $trip->save();
         
-        $email = User::where('confirmation_code',$authkey)->first();
-        
-       
-        Mail::send('email.welcome',['authkey'=>$authkey,'access'=>$email->id,'name'=>$email->firstname], function($message) {
-            $message->to(Input::get('email'), Input::get('firstname'))->subject('Welcome to Hitch');});
-       
-        return redirect('congratulation');
+        return "OK";
     }
     
 }

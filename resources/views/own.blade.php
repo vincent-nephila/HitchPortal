@@ -1,22 +1,23 @@
 <!DOCUMENT HTML>
 <html>
     <head>
-        <link href="{{ asset('/bootstrap/dist/css/bootstrap.css') }}" rel="stylesheet">
+
         <link href="{{ asset('/css/custom.css') }}" rel="stylesheet">
-        <!--link rel="stylesheet" href= "{{asset('/css/layout.css')}}"-->
-        <link href="{{ asset('/timepicker/js/bootstrap-timepicker.css') }}"></link>
+
         
-        
-        <script src="{{ asset('/bootstrap/dist/js/bootstrap.js') }}"></script>
-        <script src="{{ asset('/timepicker/js/bootstrap-timepicker.min.js') }}"></script>
         <script src="{{ asset('/jquery/dist/jquery.slim.js') }}"></script>
         <script src="{{ asset('/jquery/dist/jquery.js') }}"></script>
+
+        <script src="{{ asset('/bootstrap/dist/js/bootstrap.js') }}"></script>
+        <link href="{{ asset('/bootstrap/dist/css/bootstrap.css') }}" rel="stylesheet">        
         
-      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-      <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet">
       <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    
 
-
+      
+      <script src="{{ asset('jquery.ptTimeSelect.js') }}"></script>
+      <link href="{{ asset('jquery.ptTimeSelect.css') }}" rel="stylesheet">
        <script>
       $(function() {
         $( "#datepicker" ).datepicker();
@@ -24,6 +25,7 @@
         
       });
       </script>
+              
 
         
     </head>
