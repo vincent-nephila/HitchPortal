@@ -18,7 +18,8 @@ class PassengerController extends Controller
         $user = \Auth::user();
    
         $content = '<hr>';
-   
+        $content = $content.'<a href="/passenger/reserve"><div class="menu-item">Reserve a Trip</div></a>';
+        $content = '<hr>';
         return $content;
     }    
     
