@@ -83,13 +83,13 @@ Route::group(['middleware' => ['web']], function () {
         
         return redirect('portal/owner/approval');   
     });
-    Route::get('/findseat/{trip}','AjaxController@showSeats');
+Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
     
 });
 
 Route::get('/addVehicle/{maker}','AjaxController@getModel');
+Route::get('/findseat/{trip}','AjaxController@showSeats');
 Route::get('/findtrip/{destination}','AjaxController@showTrips');
-
 Route::get('/approve/{applicant}','AjaxController@changeOwnerStat');
 Route::get('/approveDriver/{applicant}','AjaxController@changeDriverStat');
 Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');

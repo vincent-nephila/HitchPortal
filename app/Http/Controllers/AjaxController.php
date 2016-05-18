@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+
 
 class AjaxController extends Controller
 {
@@ -27,8 +27,8 @@ class AjaxController extends Controller
                     . "join ctr_routes on trips.route = ctr_routes.id "
                     . "join vehicles on trips.vehicle_id = vehicles.id "
                     . "join drivers on trips.driver_id = drivers.id "
-                    . "where ctr_routes.destinationPoint = '$destination';");
-           $value = '<fieldset class="form-group">';
+                    . "where ctr_routes.destinationPoint = '$destination' AND trips.seats != 0;");
+/*           $value = '<fieldset class="form-group">';
             $value = $value.'<label class="control-label col-md-2">Available Trips</label>';
             $value = $value.'<div class="col-md-10" >';
             $value = $value.'<select class="form-control" name="trip" placeholder="Model" onchange="findSeat(this.value)">';
@@ -40,7 +40,7 @@ class AjaxController extends Controller
             $value = $value. '</div>';
             $value = $value. '</fieldset>';
            //$value = \App\Trip::with(['driver','vehicle','ctrRoute'])->get();
-/*            $value='';
+            $value='';
             
               $value = '<table class="table">';
             foreach($results as $result){
@@ -56,6 +56,18 @@ class AjaxController extends Controller
             }
 
             $value = $value. '</table>';*/
+            $value = '';
+            foreach($results as $result){
+                $pic ='/uploads/vehicle/'.$result->veFrontPic;
+                $value = $value.'<div class ="container item" id="'.$result->tripId.'" style="width: 100%;">';
+                $value = $value.'<div class ="col-md-2"><img src="http://hitch.app'.$pic.'" style="height:100px; width:auto;"></div>';
+                $value = $value.'<div class ="col-md-10">';
+                $value = $value. 'Start: '.$result->startPoint.'<br>';
+                $value = $value. 'Date:'.$result->date.'<br>';
+                $value = $value. 'Time:'.$result->time.'<br>';
+                $value = $value. 'Vehicle:'.$result->veModel.'<br>';
+                $value = $value. '</div></div>';
+            }
         return $value;
         }
     }
@@ -93,6 +105,7 @@ class AjaxController extends Controller
     if(Request::ajax()){
         $user = \App\Driver::find($applicant);
         $user->acctStatus = 1;
+        $user->status = 1;
         $user->save();
         return "Approved";
     }
@@ -100,8 +113,8 @@ class AjaxController extends Controller
     
         public function changeVehicleStat($applicant){
     if(Request::ajax()){
-        $user = \App\Driver::find($applicant);
-        $user->acctStatus = 4;
+        $user = \App\Vehicle::find($applicant);
+        $user->veApproved = 4;
         $user->save();
         return "Approved";
     }

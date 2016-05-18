@@ -14,8 +14,10 @@ class OwnerController extends Controller
 {
     public function __construct() {
         $this->middleware('auth');
+        $this->middleware('owner');
         $this->middleware('status',['except' => ['addRequirements','uploadRequirements','addVehicle','saveVehicle','saveDriver','addDriver','listVehicle','listDriver']]);
         
+        view()->share('user', \Auth::user());
         //if (Auth::user()->accesslevel == env('USER_OWNER')){
         //    return redirect('/');
        // }
@@ -124,12 +126,12 @@ class OwnerController extends Controller
     
     public function addVehicle(){
         
-        $user = \Auth::user();
+        //$user = \Auth::user();
         $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
         $result = DB::Select('select distinct maker from ctr_vehicles;');
         $menu = $this->menuRenderer();
        if($profile >= 1){
-        return view('owner.addVehicle',compact('result','menu','user'));
+        return view('owner.addVehicle',compact('result','menu'));
        }
        else{
            return redirect('/');
@@ -137,6 +139,7 @@ class OwnerController extends Controller
     }
     
     public function listDriver(){
+        $user = \Auth::user();
         $menu = $this->menuRenderer();
         $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
         $driverCount = \App\Driver::where('owner_id',\Auth::user()->id)->count();
@@ -146,7 +149,7 @@ class OwnerController extends Controller
         else{
             if ($driverCount >=0){
             $driver = \App\Driver::where('owner_id',\Auth::user()->id)->get();                
-            return view('owner.driverList',compact('menu','driver'));
+            return view('owner.driverList',compact('user','menu','driver'));
             }
             else{
                 return redirect('portal/owner/addDriver');
@@ -199,13 +202,15 @@ class OwnerController extends Controller
         $request->file('front')->move(public_path().'/uploads/vehicle',$front.'.'.$frontExt);
         $request->file('side')->move(public_path().'/uploads/vehicle',$side.'.'.$sideExt);
         $request->file('back')->move(public_path().'/uploads/vehicle',$back.'.'.$backExt);
-        
+        $matchfields=['maker'=>$request->maker,'model'=>$request->model];
+        $vehicleCtr = \App\ctrVehicle::where($matchfields)->first();
         $vehicle = new \App\Vehicle;
         $vehicle->idno = \Auth::user()->id;
         $vehicle->vePlateNo = $request->plateNo;
         $vehicle->veMaker = $request->maker;
         $vehicle->veModel = $request->model;
         $vehicle->veColor = $request->color;
+        $vehicle->veSeats = $vehicleCtr->seats;
         $vehicle->veRegistration = $reg.'.'.$regExt;
         $vehicle->veInsurance = $insr.'.'.$insrExt;
         $vehicle->veFrontPic = $front.'.'.$frontExt;
@@ -295,7 +300,7 @@ class OwnerController extends Controller
         $matchfields=['idno'=>$user->id,'veApproved'=>env('VEHICLE_APPROVED'),'veStatus'=>0];
         $vehicle=\App\Vehicle::where($matchfields)->get();  
         
-        $matchfield2=['owner_id'=>$user->id,'acctStatus'=>1,'status'=>1];
+        $matchfield2=['owner_id'=>$user->id,'acctStatus'=>env('DRIVER_OK'),'status'=>1];
         $drivers=\App\Driver::where($matchfield2)->get();  
         
         

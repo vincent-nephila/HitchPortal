@@ -3,22 +3,22 @@
 namespace App\Http\Controllers\Passenger;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-
 use App\Http\Controllers\Controller;
-use App\User;
-use Illuminate\Support\Facades\Input;
 use DB;
 class PassengerController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth');
+        $this->middleware('passenger');
+        $this->middleware('status',['except' => ['addRequirements','uploadRequirements','addVehicle','saveVehicle','saveDriver','addDriver','listVehicle','listDriver']]);
+        
+    }    
+    
     public function menuRenderer(){
         $user = \Auth::user();
-
-        
+   
         $content = '<hr>';
-
-        
-        
+   
         return $content;
     }    
     
@@ -27,6 +27,7 @@ class PassengerController extends Controller
                 $route = DB::Select('select distinct destinationPoint from ctr_routes');
                 $menu = $this->menuRenderer();
                 return view('passenger.makeReservation',compact('user','route','menu'));
+                
     }
     
     public function saveReservation(Request $request){
@@ -34,6 +35,7 @@ class PassengerController extends Controller
             'trip' => 'required',
             'seat' => 'required',
             ]);
+        
         $user = \Auth::user();
         $reserve = new \App\Reservation;
         $reserve->idno = $user->id;
@@ -45,7 +47,7 @@ class PassengerController extends Controller
         $seat->available = 0;
         
         $trip = \App\Trip::find($request->trip);
-        $seatAva = $trip->seats - 1;
+        
         $trip->seats = $trip->seats - 1;
         
         
@@ -57,7 +59,7 @@ class PassengerController extends Controller
         $seat->save();
         $trip->save();
         
-        return "OK";
+        return \Auth::user()->id;
     }
     
 }

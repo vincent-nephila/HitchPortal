@@ -9,9 +9,10 @@
     <div>Brand: {{$vehicle->veMaker}}</div>
     <div>Model: {{$vehicle->veModel}}</div>
     <div>Color: {{$vehicle->veColor}}</div>
+    <div>Operator: {{$operator->firstname}} {{$operator->lastname}}</div>
     <br>
-@if($applicant->veApproved == env('DRIVER_PROCESS'))
-<button class='btn btn-success' onclick="approve({{$applicant->id}})"><div id="status">Approve</div></button>
+@if($vehicle->veApproved == env('DRIVER_PROCESS'))
+<button class='btn btn-success' onclick="approve({{$vehicle->id}})"><div id="status">Approve</div></button>
 @endif
    
 </div>

@@ -14,11 +14,13 @@
                                     @endforeach 
                                 </select>
                             </div>
-                        </fieldset>                        
-                        <div id="trip" style="height: 40vh;overflow-x: hidden;margin-left:10%;overflow-y: scroll;
-    width: 80%;">
+                        </fieldset>                     
+                        <div class="container" id="tripOption">
+                        <div id="trip" class="selectable">
+                        </div>
                         </div>
                         
+                        <input type="hidden" id="tripId" name="trip" value="">
                         <div id="seat">
                             </div>
 
@@ -35,6 +37,7 @@
                   
 <script>
 function findTrip(destination) {
+    $("#tripOption").css({'height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
     $.ajax({ 
             type: "GET", 
             url: "/findtrip/"+destination, 
@@ -47,17 +50,22 @@ function findTrip(destination) {
                       
 }
 
-function findSeat(trip) {
-    //document.getElementById("bow").innerHTML = trip;
-    $.ajax({ 
+$("#trip").on("click", "div.item", function(){
+    $('.item').css('background-color','aqua');
+    $(this).css('background-color','green');
+    $("#tripId").val($(this).attr('id'));
+    var trip = $(this).attr('id');
+        $.ajax({ 
             type: "GET", 
             url: "/findseat/"+trip, 
-            success:function(data){              
-                
+            success:function(data){                              
                 $('#seat').html(data);
                  }
             });
-                      
-}
+        
+
+});
 </script>
+
+
 @stop

@@ -12,11 +12,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/nephila/Desktop/laravel/resources/views/admin/routeList.blade.php</file>
+            <file>file:/home/nephila/Desktop/laravel/resources/views/own.blade.php</file>
+            <file>file:/home/nephila/Desktop/laravel/resources/views/admin/driverProfile.blade.php</file>
+            <file>file:/home/nephila/Desktop/laravel/public/css/admin.css</file>
+            <file>file:/home/nephila/Desktop/laravel/app/Http/routes.php</file>
             <file>file:/home/nephila/Desktop/laravel/resources/views/admin/applicantProfile.blade.php</file>
-            <file>file:/home/nephila/Desktop/laravel/resources/views/owner/driverList.blade.php</file>
+            <file>file:/home/nephila/Desktop/laravel/app/Http/Controllers/AjaxController.php</file>
             <file>file:/home/nephila/Desktop/laravel/resources/views/admin/index.blade.php</file>
-            <file>file:/home/nephila/Desktop/laravel/app/Http/Controllers/Owner/OwnerController.php</file>
         </group>
     </open-files>
 </project-private>

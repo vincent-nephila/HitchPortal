@@ -62,6 +62,6 @@ class AdminController extends Controller
         $pic1 ='/uploads/vehicle/'.$vehicle->veFrontPic;
         $pic2 ='/uploads/vehicle/'.$vehicle->veSidePic;
         $pic3 ='/uploads/vehicle/'.$vehicle->veBackPic;
-        return view('admin.driverProfile',compact('vehicle','profile','pic1','pic2','pic3','operator'));
+        return view('admin.vehicleProfile',compact('vehicle','pic1','pic2','pic3','operator'));
     }       
 }

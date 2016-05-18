@@ -24,14 +24,14 @@
             @foreach($driver as $drivers)                     
                 <tr class="clickable-row" data-href="/admin/driver/{{$drivers->id}}">
                 <td>{{$drivers->lastname}}, {{$drivers->firstname}} {{$drivers->middlename}}</td><td> 
-                @if ($drivers->status == env('STATUS_OK'))
+                @if ($drivers->acctStatus == env('DRIVER_OK'))
                     {{$result="OK"}}
                 @endif
-                @if ($drivers->status == env('STATUS_APPROVAL'))
+                @if ($drivers->acctStatus == env('DRIVER_PROCESS'))
                     {{$result="FOR ASSESSMENT"}}
                 @endif                    
-                @if ($drivers->status == env('STATUS_PROCESS'))
-                    {{$result="INC. REQUIREMENT"}}
+                @if ($drivers->acctStatus == env('DRIVER_SUSPENDED'))
+                    {{$result="SUSPENDED"}}
                 @endif                                    
                 </td>
         </tr> 

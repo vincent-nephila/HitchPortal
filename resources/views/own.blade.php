@@ -15,7 +15,7 @@
       <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     
 
-      
+      <script src="{{ asset('jquery.selectable.js') }}"></script>
       <script src="{{ asset('jquery.ptTimeSelect.js') }}"></script>
       <link href="{{ asset('jquery.ptTimeSelect.css') }}" rel="stylesheet">
        <script>
@@ -25,14 +25,16 @@
         
       });
       </script>
-              
-
         
     </head>
     
     <body style="margin-bottom: 0px;">
         <div class="container-fluid" style="padding-left: 0px;padding-right: 0px;">
-            <div class="col-md-3" style="background-color: #e65c00;color:black;height: 100vh;padding-left: 0px;padding-right: 0px">                
+            <div class="col-md-3" style="background-color: #e65c00;color:black;height: 100vh;padding-left: 0px;padding-right: 0px">
+                <div style="padding:20px">
+                {{$user->firstname}}<br>
+                {{$user->lastname}}
+                </div>
                 <div>
                     {!!$menu!!}
                 </div>
