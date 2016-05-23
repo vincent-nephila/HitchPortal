@@ -25,26 +25,42 @@
                         <fieldset class="form-group">
                             <label class="control-label col-md-2">Model</label>
                             <div class="col-md-10" id="model">                            
-                            <select class="form-control" name="model" placeholder="Model">
+                            <select class="form-control" name="model">
                                 <option value="" disabled hidden selected></option>      
                             </select>
                             </div>
                         </fieldset>
-                                                                                           
-                        <fieldset class="form-group">      
-                            <label class="control-label col-md-2">Color</label>
-                            <div class="col-md-10">                            
-                                <input id="input-1" type="text" class="form-control" name="color">
+                        
+                        <fieldset class="form-group">
+                            <label class="control-label col-md-2">Year</label>
+                            <div class="col-md-10" id="year">                            
+                            <select class="form-control" name="year">
+                                <option value="" disabled hidden selected></option>      
+                            </select>
                             </div>
                         </fieldset>
                         
+                        <fieldset class="form-group">      
+                            <label class="control-label col-md-2">Color</label>
+                            <div class="col-md-10">                            
+                                <input type="text" class="form-control" name="color">
+                            </div>
+                        </fieldset>
                         
                         <fieldset class="form-group">      
                             <label class="control-label col-md-2">Insurance</label>
                             <div class="col-md-10">                            
-                                <input id="input-1" type="file" name="insurance" class="form-control" placeholder="Insurance">
+                                <input type="file" name="insurance" class="form-control">
                             </div>
                         </fieldset>
+                        
+                        <fieldset class="form-group">      
+                            <label class="control-label col-md-2">Official Receipt:</label>
+                            <div class="col-md-10">                            
+                                <input type="file" name="receipt" class="form-control">
+                            </div>
+                        </fieldset>
+                        
                         <fieldset class="form-group"> 
                             <label class="control-label col-md-2">Registration</label>
                             <div class="col-md-10">                            
@@ -89,6 +105,19 @@ function getModel(maker) {
             success:function(data){              
                 $('#model').html("");
                 $('#model').html(data);
+                 }
+            }); 
+                      
+}
+
+function getYear(maker) {
+    $.ajax({ 
+            type: "GET", 
+            url: "/addYear/"+maker, 
+            success:function(data){  
+                //alert("sample");
+                $('#year').html("");
+                $('#year').html(data);
                  }
             }); 
                       

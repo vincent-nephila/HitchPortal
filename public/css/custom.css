@@ -44,3 +44,46 @@ body{
     background-color: aqua;
     padding: 10px;    
 }
+
+.menu-button{
+    background-color: #FFC22A!important;
+    border-radius: 0px!important;
+    border-left:1px!important;
+    border-right:1px!important;
+    padding: 20px 0px!important;
+    height: auto!important;
+    
+}
+
+.menu-button:hover,.menu-button:focus{
+    background-color: #FFB600!important;
+    
+}
+
+.selected{
+    background-color: green;
+}
+
+div.seat{
+    border: 1px solid;
+    width: 10%;
+    height: 100px;
+    display:inline-block;
+}
+div.driver{
+    border: 1px solid;
+    width: 10%;
+    height: 100px;
+    display:inline-block;
+    vertical-align: top;
+}
+
+.two{
+    margin-left:10%;
+}
+
+.col-md-6{
+    text-transform: uppercase;
+    font-weight: 600;
+    color: white;
+}

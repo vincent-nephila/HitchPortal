@@ -30,18 +30,14 @@
     
     <body style="margin-bottom: 0px;">
         <div class="container-fluid" style="padding-left: 0px;padding-right: 0px;">
-            <div class="col-md-3" style="background-color: #e65c00;color:black;height: 100vh;padding-left: 0px;padding-right: 0px">
-                <div style="padding:20px">
-                {{$user->firstname}}<br>
-                {{$user->lastname}}
-                </div>
-                <div>
+            <div class="col-md-3" style="background-color:#0082c4;color:black;height: 100vh;padding-left: 0px;padding-right: 0px">
+
+                
                     {!!$menu!!}
-                </div>
-                <a href='{{url('/logout')}}'><div>Logout</div></a>
-                <hr>
+                
+                <a class='btn btn-primary form-control menu-button' href='{{url('/logout')}}'><div>Logout</div></a>
             </div>
-            <div class="col-md-9" style="height:100vh;overflow-x:hidden;overflow-y:scroll;">
+            <div class="col-md-9" style="height:100vh;overflow-x:hidden;overflow-y:scroll;background-color:#f9d796;">
 @yield('content')
             </div>
         </div>

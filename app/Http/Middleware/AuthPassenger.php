@@ -16,7 +16,7 @@ class AuthPassenger
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user()->accesslevel == env('USER_PASSENGER')){
+        if (Auth::user()->accesslevel != env('USER_PASSENGER')){
             return redirect('/');
         }        
         return $next($request);

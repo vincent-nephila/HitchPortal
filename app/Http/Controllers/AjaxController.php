@@ -5,71 +5,91 @@ namespace App\Http\Controllers;
 use Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Input;
 
 class AjaxController extends Controller
 {
     public function getModel($maker){
-    if(Request::ajax()){
+    //if(Request::ajax()){
         $result = DB::Select("select model from ctr_vehicles where maker='$maker'");
-        $value = '<select class="form-control" name="model" placeholder="Model">';
+        $value = '<select class="form-control" name="model" placeholder="Model" onclick="getYear(this.value)">';
         foreach($result as $results){
             $value= $value.'<option value="' . $results->model .'">' .$results->model . '</option>';
         }
         $value= $value.'</select>';
         return $value;
-    }
+    //}
     }
     
-    public function showTrips($destination){
+    public function getYear($model){
+    if(Request::ajax()){
+        $result = DB::Select("select * from ctr_vehicles where model='$model'");
+        $value = '<select class="form-control" name="year">';
+        foreach($result as $results){
+            $value= $value.'<option value="' . $results->prodYear .'">' .$results->prodYear . '</option>';
+        }
+        $value= $value.'</select>';
+        return $value;
+       }
+    }    
+    public function showMeeting($destination){
         if(Request::ajax()){
-            $results = DB::Select("select *,trips.id tripId from trips "
+            $result = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "
                     . "join ctr_routes on trips.route = ctr_routes.id "
                     . "join vehicles on trips.vehicle_id = vehicles.id "
                     . "join drivers on trips.driver_id = drivers.id "
-                    . "where ctr_routes.destinationPoint = '$destination' AND trips.seats != 0;");
-/*           $value = '<fieldset class="form-group">';
-            $value = $value.'<label class="control-label col-md-2">Available Trips</label>';
-            $value = $value.'<div class="col-md-10" >';
-            $value = $value.'<select class="form-control" name="trip" placeholder="Model" onchange="findSeat(this.value)">';
-            $value = $value.'<option value="" disabled hidden selected></option>';
-            foreach($results as $result){
-                $value= $value.'<option value="'.$result->tripId .'">' .$result->tripId.'-'.$result->vePlateNo.'-'.$result->firstname. '</option>';
-            }
-            $value = $value. '</select>';
-            $value = $value. '</div>';
-            $value = $value. '</fieldset>';
-           //$value = \App\Trip::with(['driver','vehicle','ctrRoute'])->get();
-            $value='';
+                    . "where ctr_routes.destinationPoint = '$destination' AND trips.seats != 0;");        
+         $value=''; 
+        //$value = '<select class="form-control" name="meetPoint" onclick="findDate()">';
+        foreach($result as $results){
+            $value= $value.'<option value="' . $results->startPoint .'">' .$results->startPoint . '</option>';
+        }
+        //$value= $value.'</select>';
             
-              $value = '<table class="table">';
-            foreach($results as $result){
-           $pic ='/uploads/vehicle/'.$result->veFrontPic;
-            $value = $value.'<tr>';
-           $value = $value. '<td><img src="http://hitch.app'.$pic.'" style="height:100px; width:auto;"></td>';
-           $value = $value. '<td>Start: '.$result->startPoint.'<br>';
-           $value = $value. 'Date:'.$result->date.'<br>';
-           $value = $value. 'Time:'.$result->time.'<br>';
-           $value = $value. 'Vehicle:'.$result->veModel.'<br>';
-           $value = $value. '</td>';
-           $value = $value. '</tr>';
-            }
-
-            $value = $value. '</table>';*/
+        return $value;
+        }
+    }
+    
+        public function showDate($destination,$start){
+        if(Request::ajax()){
+            $result = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "
+                    . "join ctr_routes on trips.route = ctr_routes.id "
+                    . "join vehicles on trips.vehicle_id = vehicles.id "
+                    . "join drivers on trips.driver_id = drivers.id "
+                    . "where ctr_routes.destinationPoint = '$destination' AND ctr_routes.startPoint = '$start' AND trips.seats != 0;");        
+          $value='';
+        //$value = '<select class="form-control" name="meetPoint" onclick="findDate()">';
+        foreach($result as $results){
+            $value= $value.'<option value="' . $results->date .'">' .$results->date . '</option>';
+        }
+        //$value= $value.'</select>';
+            
+        return $value;
+        }
+    }
+    
+    public function showTrips($destination,$start,$date){
+        //if(Request::ajax()){
+            $results = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "
+                    . "join ctr_routes on trips.route = ctr_routes.id "
+                    . "join vehicles on trips.vehicle_id = vehicles.id "
+                    . "join drivers on trips.driver_id = drivers.id "
+                    . "where ctr_routes.destinationPoint = '$destination' AND ctr_routes.startPoint = '$start'  AND trips.date = '$date'  AND trips.seats != 0;");
             $value = '';
             foreach($results as $result){
                 $pic ='/uploads/vehicle/'.$result->veFrontPic;
                 $value = $value.'<div class ="container item" id="'.$result->tripId.'" style="width: 100%;">';
-                $value = $value.'<div class ="col-md-2"><img src="http://hitch.app'.$pic.'" style="height:100px; width:auto;"></div>';
-                $value = $value.'<div class ="col-md-10">';
+                $value = $value.'<div class ="col-md-3"><img src="http://hitch.app'.$pic.'" style="height:auto; width:100%;"></div>';
+                $value = $value.'<div class ="col-md-9">';
                 $value = $value. 'Start: '.$result->startPoint.'<br>';
                 $value = $value. 'Date:'.$result->date.'<br>';
                 $value = $value. 'Time:'.$result->time.'<br>';
-                $value = $value. 'Vehicle:'.$result->veModel.'<br>';
+                $value = $value. 'Vehicle:'.$result->veModel.'<br>';               
+                $value = $value. 'Available: '.$result->tripSeat.'<br>';
                 $value = $value. '</div></div>';
             }
         return $value;
-        }
+        //}
     }
     
     public function showSeats($trip){
@@ -101,7 +121,7 @@ class AjaxController extends Controller
     }
     }
     
-        public function changeDriverStat($applicant){
+    public function changeDriverStat($applicant){
     if(Request::ajax()){
         $user = \App\Driver::find($applicant);
         $user->acctStatus = 1;
@@ -110,8 +130,7 @@ class AjaxController extends Controller
         return "Approved";
     }
     }
-    
-        public function changeVehicleStat($applicant){
+    public function changeVehicleStat($applicant){
     if(Request::ajax()){
         $user = \App\Vehicle::find($applicant);
         $user->veApproved = 4;
@@ -119,4 +138,18 @@ class AjaxController extends Controller
         return "Approved";
     }
     }    
+    public function saveReservation(){
+        $seatTaken = Input::get(1);
+        $looper = 0;
+        //$seat='';
+        while($seatTaken > $looper){
+        $matchfields=['tripId'=>Input::get(0),'seatno'=>Input::get($looper+2)];
+        $seat = \App\Seat::where($matchfields)->first();
+        $seat->available = 0;
+        $seat->save();
+        $looper=$looper+1;
+        }
+        return $seat->available;
+        //return "now";
+    }
 }

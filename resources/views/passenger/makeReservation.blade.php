@@ -7,22 +7,40 @@
                         <fieldset class="form-group">
                             <label class="control-label col-md-2">Destination</label>
                             <div class="col-md-10">
-                                <select class="form-control" name="route" onchange="findTrip(this.value)">
+                                <select class="form-control"  name="route" onchange="findMeet(this.value)">
                                     <option value="" disabled hidden selected></option>
                                     @foreach($route as $routes)
                                     <option value="{{$routes->destinationPoint}}">{{$routes->destinationPoint}}</option>
                                     @endforeach 
                                 </select>
                             </div>
-                        </fieldset>                     
+                        </fieldset>
+                        
+                        <fieldset class="form-group">
+                            <label class="control-label col-md-2">Meeting Point</label>
+                            <div class="col-md-10" >                            
+                            <select class="form-control" id="meet" name="meetPoint" onclick="findDate()">
+                                <option value="" disabled hidden selected></option>      
+                            </select>
+                            </div>
+                        </fieldset>
+                        
+                        <fieldset class="form-group">
+                            <label class="control-label col-md-2">Date</label>
+                            <div class="col-md-10" >                            
+                            <select class="form-control" id="date" name="date" onclick="findTrip()">
+                                <option value="" disabled hidden selected></option>      
+                            </select>
+                            </div>
+                        </fieldset>                        
+                        
                         <div class="container" id="tripOption">
                         <div id="trip" class="selectable">
                         </div>
                         </div>
                         
                         <input type="hidden" id="tripId" name="trip" value="">
-                        <div id="seat">
-                            </div>
+
 
                         <div class="col-sm-offset-10 col-sm-2" style="text-align: right;">
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -33,17 +51,47 @@
                             <li>{{$error}}</li>
                         @endforeach
                     @endif 
-
+                    <div id="test"></div>
                   
 <script>
-function findTrip(destination) {
-    $("#tripOption").css({'height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
+function findMeet(destination) {
+    //$("#tripOption").css({'height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
+    
     $.ajax({ 
             type: "GET", 
-            url: "/findtrip/"+destination, 
-            success:function(data){   
-                $('#seat').html("");
-                $('#trip').html("");
+            url: "/findmeet/"+destination, 
+            success:function(data){
+                $('#date').html("");
+                $('#meet').html("");
+                $('#meet').html(data);
+                 }
+            });
+                      
+}
+
+function findDate() {
+    //$("#tripOption").css({'height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
+    
+    //alert($('select[name=route]').val());
+    $.ajax({ 
+            type: "GET", 
+            url: "/finddate/"+$('select[name=route]').val()+"/"+$('select[name=meetPoint]').val(),
+            success:function(data){
+                $('#date').html("");
+                $('#date').html(data);
+                
+                 }
+            });
+                      
+}
+
+function findTrip() {
+    $("#tripOption").css({'height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
+    
+    $.ajax({ 
+            type: "GET", 
+            url: "/finddate/"+$('select[name=route]').val()+"/"+$('select[name=meetPoint]').val()+"/"+$('select[name=date]').val(),
+            success:function(data){
                 $('#trip').html(data);
                  }
             });

@@ -26,30 +26,37 @@ class OwnerController extends Controller
     public function menuRenderer(){
         $user = \Auth::user();
         $userProfile = \App\OwnerProfile::where('idno',$user->id)->count();
+        $userProf = \App\OwnerProfile::where('idno',$user->id)->first();
         $vehicle = \App\Vehicle::where('idno',$user->id)->first();
         $driver = \App\Driver::where('owner_id',$user->id)->first();
+        $pic = '/uploads/owner/'.$userProf->picture;
+        $content ='<div style="padding:20px">';
+        $content = $content.'<div class="col-md-6">';
+        $content = $content.'<img src="'.$pic.'" style="width:120px;height:auto;float:right;">';
+        $content = $content.'</div>';
+        $content = $content.'<div class="col-md-6">';
+        $content = $content.$user->firstname.'<br>';
+        $content = $content.$user->lastname;
+        $content = $content.'</div>';
+        $content = $content.'</div>';
         
-        $content = '<hr>';
+        $content = $content.'<div>';
         if((($user->status==env('STATUS_PROCESS'))&&($userProfile >=1))||($user->status==env('STATUS_OK'))){
-
-                $content = $content.'<a href="/portal/owner/vehicle"><div class="menu-item">Register Vehicle</div></a>';
-                $content = $content.'<hr>';
-
-            
-                $content = $content.'<a href="/portal/owner/driver"><div class="menu-item">Register Drivers</div></a>';
-                $content = $content.'<hr>';
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/vehicle"><div class="menu-item">Vehicles</div></a>';
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/driver"><div class="menu-item">Drivers</div></a>';
+                
             
             if(($driver != null)&&($vehicle != null)&&($user->status==env('STATUS_PROCESS'))){
-                $content = $content.'<a href="/changeStat"><div class="menu-item">Set me a schedule</div></a>';
-                $content = $content.'<hr>';                
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/changeStat"><div class="menu-item">Set me a schedule</div></a>';
+                               
             }
         }
         if($user->status==env('STATUS_OK')){
-                $content = $content.'<a href="/portal/owner/createTrip"><div class="menu-item">Create a Trips</div></a>';
-                $content = $content.'<hr>';
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/createTrip"><div class="menu-item">Create a Trips</div></a>';
+                
+
         }
-        
-        
+        $content = $content.'</div>';
         return $content;
     }
      
@@ -176,7 +183,9 @@ class OwnerController extends Controller
             'plateNo' => 'required|max:7',
             'maker' => 'required|max:255',
             'model' => 'required|max:255',
+            'year' => 'required|max:255',
             'color' => 'required|max:255',
+            'receipt' => 'required|mimes:jpg,jpeg,png',
             'registration' => 'required|mimes:jpg,jpeg,png',
             'insurance' => 'required|mimes:jpg,jpeg,png',
             'front' => 'required|mimes:jpg,jpeg,png',
@@ -186,32 +195,37 @@ class OwnerController extends Controller
         ]);
         
         $reg = \Auth::user()->id.'-'.str_random(5);
+        $receipt = \Auth::user()->id.'-'.str_random(5);
         $insr = \Auth::user()->id.'-'.str_random(5);
         $back = \Auth::user()->id.'-'.str_random(5);
         $front = \Auth::user()->id.'-'.str_random(5);
         $side = \Auth::user()->id.'-'.str_random(5);
       
         $regExt = $request->file('registration')->getClientOriginalExtension();
+        $receiptExt = $request->file('receipt')->getClientOriginalExtension();
         $insrExt = $request->file('insurance')->getClientOriginalExtension();
         $frontExt = $request->file('front')->getClientOriginalExtension();
         $sideExt = $request->file('side')->getClientOriginalExtension();
         $backExt = $request->file('back')->getClientOriginalExtension();
 
         $request->file('registration')->move(public_path().'/uploads/vehicle',$reg.'.'.$regExt);
+        $request->file('receipt')->move(public_path().'/uploads/vehicle',$receipt.'.'.$receiptExt);
         $request->file('insurance')->move(public_path().'/uploads/vehicle',$insr.'.'.$insrExt);
         $request->file('front')->move(public_path().'/uploads/vehicle',$front.'.'.$frontExt);
         $request->file('side')->move(public_path().'/uploads/vehicle',$side.'.'.$sideExt);
         $request->file('back')->move(public_path().'/uploads/vehicle',$back.'.'.$backExt);
-        $matchfields=['maker'=>$request->maker,'model'=>$request->model];
+        $matchfields=['maker'=>$request->maker,'model'=>$request->model,'prodYear'=>$request->year];
         $vehicleCtr = \App\ctrVehicle::where($matchfields)->first();
         $vehicle = new \App\Vehicle;
         $vehicle->idno = \Auth::user()->id;
         $vehicle->vePlateNo = $request->plateNo;
         $vehicle->veMaker = $request->maker;
         $vehicle->veModel = $request->model;
+        $vehicle->veProdYear = $request->year;
         $vehicle->veColor = $request->color;
         $vehicle->veSeats = $vehicleCtr->seats;
         $vehicle->veRegistration = $reg.'.'.$regExt;
+        $vehicle->veReceipt = $receipt.'.'.$receiptExt;
         $vehicle->veInsurance = $insr.'.'.$insrExt;
         $vehicle->veFrontPic = $front.'.'.$frontExt;
         $vehicle->veBackPic = $side.'.'.$sideExt;
@@ -220,12 +234,13 @@ class OwnerController extends Controller
         $vehicle->save();
         
         
-        return redirect('portal/owner/addVehicle')->with('success', "New vehicle added.");
+        return redirect('portal/owner/vehicle')->with('success', "New vehicle added.");
     }
     
     
     
     public function saveDriver(Request $request){
+    if($request->manage == null){
         $this->validate($request, [
             'firstname' => 'required|max:255',
             'middlename' => 'required|max:255',
@@ -290,7 +305,64 @@ class OwnerController extends Controller
         $driverProfile->save();
 
         return redirect('portal/owner/driver')->with('success', "New driver added.");
+    }
+    else{
+            $this->validate($request, [
+            'licNo' => 'required|max:20|unique:driver_profiles',
+            'licExpDate'=> 'required|date',
+            'lic' => 'required|mimes:jpeg,png,pdf',
+            'nbi' => 'required|mimes:jpeg,png,pdf',
+
+        ]);     
+
+        $time2 = strtotime($request->licExpDate);
+        $newformat2 = date('Y-m-d',$time2);       
         
+        $user = \Auth::user();
+        $user->driver = 1;
+        $user->save();
+        
+        $userProfile = \App\OwnerProfile::where('idno',$user->id)->first();
+        $driver = new \App\Driver;
+        $driver->owner_id = $user->id;
+        $driver->firstname = $user->firstname;
+        $driver->middlename = $user->middlename;
+        $driver->lastname = $user->lastname;
+        $driver->email = $user->email;
+        $driver->mobile = $user->mobile;
+        $driver->acctStatus = 0;
+        $driver->save();
+        
+        $driverProfile = new \App\DriverProfile;
+        $driverProfile->idno = $driver->id;     
+        $driverProfile->birthDate = $userProfile->birthDate;
+        $driverProfile->address = $userProfile->address;  
+        $driverProfile->licNo = $request->licNo;
+        $driverProfile->licExp = $newformat2;          
+        
+        if ($request->hasFile('lic')) {
+            $lic = \Auth::user()->id.'-'.str_random(5);
+            $licExt = $request->file('lic')->getClientOriginalExtension();
+            $request->file('lic')->move(public_path().'/uploads/driver',$lic.'.'.$licExt);
+            $driverProfile->lic = $lic.'.'.$licExt;
+        }
+        
+        if ($request->hasFile('nbi')) {
+            $nbi = \Auth::user()->id.'-'.str_random(5);
+            $nbiExt = $request->file('nbi')->getClientOriginalExtension();
+            $request->file('nbi')->move(public_path().'/uploads/driver',$nbi.'.'.$nbiExt);
+            $driverProfile->nbi = $nbi.'.'.$nbiExt;
+        }        
+
+        if ($request->hasFile('pic')) {
+            $pic = \Auth::user()->id.'-'.str_random(5);
+            $picExt = $request->file('pic')->getClientOriginalExtension();
+            $request->file('pic')->move(public_path().'/uploads/driver',$pic.'.'.$picExt);
+            $driverProfile->picture = $pic.'.'.$picExt;
+        }            
+        $driverProfile->save();
+        return redirect('portal/owner/driver')->with('success', "You have successfully added yourself as a driver.");
+    }
     }
     
     public function createTrip(){

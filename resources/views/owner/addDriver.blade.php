@@ -3,7 +3,11 @@
       
     <h3 align="center">Driver Registration Request</h3>
                     <form method="POST" class='form-horizontal' action="{{url('/portal/owner/addDriver')}}" enctype="multipart/form-data">
-                        {!!csrf_field()!!}                  
+                        {!!csrf_field()!!}         
+                        @if($user->driver == 0)
+                        <label> <input type="checkbox" id="manager" onchange="change()" value="OK" name="manage">Make me a driver</label>
+                        @endif
+                        <div id="ownerDriver">
                     <fieldset class="form-group">
                             <label class="control-label col-md-2">Name</label>
                             <div class="col-md-10">                         
@@ -42,6 +46,7 @@
                                 <input type="text" class="form-control" name="address" >
                             </div>
                     </fieldset>
+                        </div>
                     <fieldset class="form-group">                   
                             <label class="control-label col-md-2">License No.</label>
                             <div class="col-md-10">                         
@@ -81,6 +86,18 @@
 <div id="demo"></div>
 
 <script src="{{ asset('ajax.js') }}"></script>
+<script>
+    var clone = $("#ownerDriver").clone();
+function change(){
+   if($("#manager").is(':checked')){
+    $('#ownerDriver').html("");
+}
+else{
+    $('#ownerDriver').html(clone);
+}
+}
+
+</script>
 
 
 @if(count($errors)>0) 

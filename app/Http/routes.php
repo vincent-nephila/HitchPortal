@@ -83,14 +83,19 @@ Route::group(['middleware' => ['web']], function () {
         
         return redirect('portal/owner/approval');   
     });
-Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
-    
+Route::get('/findmeet/{destination}','AjaxController@showMeeting');
+Route::get('/finddate/{destination}/{start}','AjaxController@showDate');
+Route::get('/finddate/{destination}/{start}/{date}','AjaxController@showTrips');
 });
 
+Route::get('/saveReservation','AjaxController@saveReservation');
 Route::get('/addVehicle/{maker}','AjaxController@getModel');
 Route::get('/findseat/{trip}','AjaxController@showSeats');
-Route::get('/findtrip/{destination}','AjaxController@showTrips');
+Route::get('/findmeet/{destination}','AjaxController@showMeeting');
+Route::get('/addYear/{model}','AjaxController@getYear');
 Route::get('/approve/{applicant}','AjaxController@changeOwnerStat');
 Route::get('/approveDriver/{applicant}','AjaxController@changeDriverStat');
 Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
+Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
+Route::get('/addYear/{model}','AjaxController@getYear');    
     

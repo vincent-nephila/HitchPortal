@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 class MainController extends Controller
 {
 
+    
+    
     public function __construct() {
         $this->middleware('auth');
         $this->middleware('status',['except'=>['redirectRequirement','redirectApproval','redirectSuspended']]);
@@ -16,29 +18,69 @@ class MainController extends Controller
 
     public function ownerMenuRenderer(){
         $user = \Auth::user();
+        $userProfile = \App\OwnerProfile::where('idno',$user->id)->count();
+        $userProf = \App\OwnerProfile::where('idno',$user->id)->first();
         $vehicle = \App\Vehicle::where('idno',$user->id)->first();
         $driver = \App\Driver::where('owner_id',$user->id)->first();
+        $pic = '/uploads/owner/'.$userProf->picture;
+        $content ='<div style="padding:20px">';
+        $content = $content.'<div class="col-md-6">';
+        $content = $content.'<img src="'.$pic.'" style="width:120px;height:auto;float:right;">';
+        $content = $content.'</div>';
+        $content = $content.'<div class="col-md-6">';
+        $content = $content.$user->firstname.'<br>';
+        $content = $content.$user->lastname;
+        $content = $content.'</div>';
+        $content = $content.'</div>';
         
-        $content = '<hr>';
-                $content = $content.'<a href="/portal/owner/addVehicle"><div class="menu-item">Register Vehicle</div></a>';
-                $content = $content.'<hr>';
-
-                $content = $content.'<a href="/portal/owner/addDriver"><div class="menu-item">Register Driver</div></a>';
-                $content = $content.'<hr>';  
+        $content = $content.'<div>';
+        if((($user->status==env('STATUS_PROCESS'))&&($userProfile >=1))||($user->status==env('STATUS_OK'))){
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/vehicle"><div class="menu-item">Vehicles</div></a>';
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/driver"><div class="menu-item">Drivers</div></a>';
+                
             
-                $content = $content.'<a href="/Trip"><div class="menu-item">Create a Trip</div></a>';
-                $content = $content.'<hr>';                
+            if(($driver != null)&&($vehicle != null)&&($user->status==env('STATUS_PROCESS'))){
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/changeStat"><div class="menu-item">Set me a schedule</div></a>';
+                               
+            }
+        }
+        if($user->status==env('STATUS_OK')){
+                $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/createTrip"><div class="menu-item">Create a Trips</div></a>';
+                
 
-        
+        }
+        $content = $content.'</div>';
         return $content;
     }
+    
+    public function passengerMenuRenderer(){
+        $user = \Auth::user();
+        
+        
+        
+        
+        $content ='<div style="padding:20px">';
+        $content = $content.'<div class="col-md-6">';
+        //$content = $content.'<img src="'.$pic.'" style="width:120px;height:auto;float:right;">';
+        $content = $content.'</div>';
+        $content = $content.'<div class="col-md-6">';
+        $content = $content.$user->firstname.'<br>';
+        $content = $content.$user->lastname;
+        $content = $content.'</div>';
+        $content = $content.'</div>';
+        $content = $content.'<div>';
+        $content = $content.'<a class="btn btn-primary form-control menu-button form-group" href="/passenger/reservation"><div class="menu-item">Reserve a Trip</div></a>';
+        $content = $content.'</div>';
+        return $content;
+    }    
     
     public function index(){
         $accesslevel = \Auth::user()->accesslevel;
         $user = \Auth::user();
         switch($accesslevel){
             case env('USER_PASSENGER');
-                return view('passenger.index',compact('user'));
+                $menu=$this->passengerMenuRenderer();
+                return view('passenger.index',compact('user','menu'));
                 break;
             case env('USER_OWNER');
                 $menu=$this->ownerMenuRenderer();
