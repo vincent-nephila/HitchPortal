@@ -17,13 +17,35 @@ class PassengerController extends Controller
     
     public function menuRenderer(){
 
-        $content = '<a class="btn btn-primary form-control menu-button form-group" href="/passenger/reservation"><div class="menu-item">Reserve a Trip</div></a>';
-        
+        $user = \Auth::user();
+    
+        $content ='<div style="padding:20px">';
+        $content = $content.'<div class="col-md-6">';
+        //$content = $content.'<img src="'.$pic.'" style="width:120px;height:auto;float:right;">';
+        $content = $content.'</div>';
+        $content = $content.'<div class="col-md-6">';
+        $content = $content.$user->firstname.'<br>';
+        $content = $content.$user->lastname;
+        $content = $content.'</div>';
+        $content = $content.'</div>';
+        $content = $content.'<div>';
+        $content = $content.'<a class="btn btn-primary form-control menu-button form-group" href="/passenger/reservation/list"><div class="menu-item">Reserved Trips</div></a>';
+        $content = $content.'</div>';
         return $content;
     }
     
     public function listReservation(){
-        $reservation = DB::Select('select ');
+            $user = \Auth::user();
+            $results = DB::Select("select * from reservations "
+                    . "join trips on trips.id = reservations.reservedTrip "
+                    . "join ctr_routes on trips.route = ctr_routes.id "
+                    . "join vehicles on trips.vehicle_id = vehicles.id "
+                    . "join drivers on trips.driver_id = drivers.id "
+                    . "where reservations.idno = '$user->id'");
+            
+            $menu = $this->menuRenderer();
+            return view('passenger.listReservation',compact('menu','results'));
+
     }
     
     public function makeReservation(){
@@ -43,8 +65,8 @@ class PassengerController extends Controller
         
         $trip = \App\Trip::find($request->trip);
         $vehicle = \App\Vehicle::find($trip->vehicle_id);
-        //matchfields=['tripId'=>$request->trip,'seatno'=>$request->seat];
-        //$seat = \App\Seat::where('tripId',$request->trip)->get();
+        $matchfields=['tripId'=>$request->trip,'available'=>0];
+        $takenSeat = \App\Seat::where($matchfields)->get();
         if($vehicle->veSeats == 4){
         $layout = $this->fourSeater();
         }
@@ -54,7 +76,8 @@ class PassengerController extends Controller
         if($vehicle->veSeats == 11){
         $layout = $this->elevenSeater();
         }        
-        return view('passenger.selectSeat',compact('menu','request','layout','vehicle'));
+        
+        return view('passenger.selectSeat',compact('menu','request','layout','vehicle','takenSeat'));
         /*
         if($trip->seats == 0){
             return "not saved";
@@ -97,7 +120,7 @@ class PassengerController extends Controller
         public function elevenSeater(){
         $content='<div>';
         $content=$content.'<div class="driver">Driver</div>';
-        $content=$content.'<div class="seat two" id="1" onclick="addChair()"></div>';
+        $content=$content.'<div class="seat two" id="1"></div>';
         $content=$content.'</div>';
         $content=$content.'<div>';
         $content=$content.'<div class="seat" id="2"></div>';

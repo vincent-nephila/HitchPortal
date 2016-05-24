@@ -23,7 +23,14 @@ class AdminController extends Controller
         $applicant = User::where('accesslevel',env('USER_OWNER'))->get();
         $driver = $this->driverList(0);
         return view('admin.index',compact('driver','applicant','user'));
-    }    
+    } 
+
+    public function completeDriverList(){
+        $user = \Auth::user();
+        $applicant = User::where('accesslevel',env('USER_OWNER'))->get();
+        $driver = $this->driverList(0);
+        return view('admin.driverList',compact('driver','applicant','user'));
+    }     
     
     public function driverList($id){
         if($id ==0){

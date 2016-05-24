@@ -11,7 +11,7 @@
     </div>
 @endif
 <div>
-    <h3>Reserved Trip</h3>
+    <h3>Scheduled Trip</h3>
     <table class="table">
         <thead>
         <tr><th>Date</th><th>Time</th><th>Destination</th><th>Pick up</th></tr>        

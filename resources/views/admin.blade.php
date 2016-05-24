@@ -33,7 +33,11 @@
                 <img src="{{asset('/images/hitch_logo.png')}}" class="img-responsive" style="width:50px;height:auto;">
             </div>
             <ul class="nav navbar-nav">
-              <li class="active"><a href="/admin">Home</a></li>
+              <li class="active"><a href="/admin">Owners</a></li>
+              <li class="active"><a href="/admin/driver">Drivers</a></li>
+            </ul> 
+              <ul class="nav navbar-nav navbar-right">
+              <li ><a href="/logout">Logout</a></li>
             </ul>
           </div>
         </nav>        

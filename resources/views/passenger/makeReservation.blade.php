@@ -18,7 +18,7 @@
                         
                         <fieldset class="form-group">
                             <label class="control-label col-md-2">Meeting Point</label>
-                            <div class="col-md-10" >                            
+                            <div class="col-md-10" >                          
                             <select class="form-control" id="meet" name="meetPoint" onclick="findDate()">
                                 <option value="" disabled hidden selected></option>      
                             </select>

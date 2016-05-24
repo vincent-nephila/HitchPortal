@@ -55,10 +55,7 @@ class MainController extends Controller
     
     public function passengerMenuRenderer(){
         $user = \Auth::user();
-        
-        
-        
-        
+    
         $content ='<div style="padding:20px">';
         $content = $content.'<div class="col-md-6">';
         //$content = $content.'<img src="'.$pic.'" style="width:120px;height:auto;float:right;">';
@@ -69,7 +66,7 @@ class MainController extends Controller
         $content = $content.'</div>';
         $content = $content.'</div>';
         $content = $content.'<div>';
-        $content = $content.'<a class="btn btn-primary form-control menu-button form-group" href="/passenger/reservation"><div class="menu-item">Reserve a Trip</div></a>';
+        $content = $content.'<a class="btn btn-primary form-control menu-button form-group" href="/passenger/reservation/list"><div class="menu-item">Reserved Trip</div></a>';
         $content = $content.'</div>';
         return $content;
     }    
@@ -83,8 +80,11 @@ class MainController extends Controller
                 return view('passenger.index',compact('user','menu'));
                 break;
             case env('USER_OWNER');
+                $user = \Auth::user();
+                $profile = \App\OwnerProfile::where('idno',$user->id)->first();                
+                $pic ='/uploads/owner/'.$profile->picture;
                 $menu=$this->ownerMenuRenderer();
-                return view('owner.index',compact('user','menu'));
+                return view('owner.index',compact('user','pic','profile','menu'));
                 break;
             case env('USER_ADMIN');
                 return redirect('/admin');
@@ -94,6 +94,13 @@ class MainController extends Controller
                 break;        
         }
     }
+    
+    public function ownerProfile(){
+        $driver = $this->driverList($id);
+        $vehicle = $this->VehicleList($id);
+        
+        return view('admin.applicantProfile',compact('applicant','profile','pic','driver','vehicle'));
+    }    
  /*   
     public function redirectApproval(){
         if(! \Auth::user()->status == env('STATUS_APPROVAL')){

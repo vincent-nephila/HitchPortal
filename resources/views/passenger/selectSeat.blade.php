@@ -1,20 +1,23 @@
 @extends('own')
 @section('content')
-<div id="vehicle">
+<div id="vehicle" style="padding:20%">
 {!!$layout!!}
-{{$vehicle->veSeats}}
-{{$vehicle->veMaker}}
-{{$request->trip}}
-<div id="test"></div>
 <button class="btn btn-primary" onclick="save()">SAVE</button>
 </div>
 <script>
+@foreach($takenSeat as $takenSeats)
+$('#{{$takenSeats->seatno}}').removeClass("seat");
+$('#{{$takenSeats->seatno}}').addClass("taken");
+@endforeach     
+    
 $('.seat').height($('.seat').width());
 $('.driver').height($('.driver').width());
+$('.taken').height($('.taken').width());
 
 $(window).resize(function(){
-    $('.seat').height($('.seat').width());
+$('.seat').height($('.seat').width());
 $('.driver').height($('.driver').width());
+$('.taken').height($('.taken').width());
 });
 
 $("#vehicle").on("click", "div.seat", function(){

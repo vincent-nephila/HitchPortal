@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
+use DB;
 use Illuminate\Support\Facades\Input;
 
 class AjaxController extends Controller
@@ -69,7 +69,7 @@ class AjaxController extends Controller
     }
     
     public function showTrips($destination,$start,$date){
-        //if(Request::ajax()){
+        if(Request::ajax()){
             $results = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "
                     . "join ctr_routes on trips.route = ctr_routes.id "
                     . "join vehicles on trips.vehicle_id = vehicles.id "
@@ -89,7 +89,7 @@ class AjaxController extends Controller
                 $value = $value. '</div></div>';
             }
         return $value;
-        //}
+        }
     }
     
     public function showSeats($trip){
@@ -138,18 +138,38 @@ class AjaxController extends Controller
         return "Approved";
     }
     }    
-    public function saveReservation(){
+    function saveReservation(){
+        if(Request::ajax()){
+        
         $seatTaken = Input::get(1);
         $looper = 0;
         //$seat='';
+        $trip = \App\Trip::find(Input::get(0));
+
+        
+        
+        if($trip->seats == 0){
+            return "not saved";
+        }
+        $trip->seats = $trip->seats - $seatTaken;
+        $trip->save();
         while($seatTaken > $looper){
         $matchfields=['tripId'=>Input::get(0),'seatno'=>Input::get($looper+2)];
         $seat = \App\Seat::where($matchfields)->first();
         $seat->available = 0;
         $seat->save();
+        
+        $user = \Auth::user();
+        $reserve = new \App\Reservation;
+        $reserve->idno = $user->id;
+        $reserve->reservedTrip = 20;
+        $reserve->reservedSeat = 1;
+        $reserve->save();
         $looper=$looper+1;
         }
-        return $seat->available;
+        
+        return redirect('/passenger/reservation/list')->with('success', "Successfully reserved");
         //return "now";
+        }
     }
 }

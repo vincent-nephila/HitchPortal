@@ -35,6 +35,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/admin/user/{id}','Admin\AdminController@ownerApplication');
     Route::get('/admin/driver/{id}','Admin\AdminController@driverApplication');
     Route::get('/admin/vehicle/{id}','Admin\AdminController@vehicleApplication');
+    Route::get('/admin/driver','Admin\AdminController@completeDriverList');
        
     //Password Reset
     Route::get('password/email', 'Auth\PasswordController@getEmail');
@@ -52,10 +53,11 @@ Route::group(['middleware' => ['web']], function () {
     
     Route::get('/portal/owner/createTrip','Owner\OwnerController@createTrip');
     Route::post('/portal/owner/createTrip','Owner\OwnerController@saveTrip');
+    Route::get('/portal/owner/trip','Owner\OwnerController@listTrips');
     
     Route::get('/passenger/reservation','Passenger\PassengerController@makeReservation');
     Route::post('/passenger/reservation','Passenger\PassengerController@saveReservation');
-    
+    Route::get('/passenger/reservation/list','Passenger\PassengerController@listReservation');
     Route::get('portal/suspendWarning',['middleware' => 'auth',function(){        
         if( \Auth::user()->status != env('STATUS_SUSPENDED')){
             return redirect('portal');
@@ -86,9 +88,9 @@ Route::group(['middleware' => ['web']], function () {
 Route::get('/findmeet/{destination}','AjaxController@showMeeting');
 Route::get('/finddate/{destination}/{start}','AjaxController@showDate');
 Route::get('/finddate/{destination}/{start}/{date}','AjaxController@showTrips');
+Route::get('/saveReservation','AjaxController@saveReservation');
 });
 
-Route::get('/saveReservation','AjaxController@saveReservation');
 Route::get('/addVehicle/{maker}','AjaxController@getModel');
 Route::get('/findseat/{trip}','AjaxController@showSeats');
 Route::get('/findmeet/{destination}','AjaxController@showMeeting');

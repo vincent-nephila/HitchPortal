@@ -12,6 +12,7 @@ return array(
     'CreateDriverProfilesTable' => $baseDir . '/database/migrations/2016_05_02_035414_create_driver_profiles_table.php',
     'CreateDriversTable' => $baseDir . '/database/migrations/2016_05_02_035404_create_drivers_table.php',
     'CreateOwnerProfilesTable' => $baseDir . '/database/migrations/2016_05_02_034012_create_owner_profiles_table.php',
+    'CreatePassengerProfilesTable' => $baseDir . '/database/migrations/2016_05_23_212008_create_passenger_profiles_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreateReservationsTable' => $baseDir . '/database/migrations/2016_05_14_063036_create_reservations_table.php',
     'CreateSeatsTable' => $baseDir . '/database/migrations/2016_05_14_064249_create_seats_table.php',

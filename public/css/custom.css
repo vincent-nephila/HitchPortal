@@ -66,24 +66,33 @@ body{
 
 div.seat{
     border: 1px solid;
-    width: 10%;
+    width: 20%;
     height: 100px;
     display:inline-block;
 }
 div.driver{
     border: 1px solid;
-    width: 10%;
+    width: 20%;
     height: 100px;
     display:inline-block;
     vertical-align: top;
+    
+    text-align: center;
 }
 
 .two{
-    margin-left:10%;
+    margin-left:20%;
 }
 
 .col-md-6{
     text-transform: uppercase;
     font-weight: 600;
     color: white;
+}
+div.taken{
+    border: 1px solid;
+    width: 20%;
+    height: 100px;
+    display:inline-block;
+    background-color: rgba(128,128,128,0.4);
 }

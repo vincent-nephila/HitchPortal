@@ -426,5 +426,17 @@ class OwnerController extends Controller
         $driver->save();
         return $vehicle->veSeats;
     }
+    
+    public function listTrips(){
+                $user = \Auth::user();            
+                    $results = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "
+                    . "join ctr_routes on trips.route = ctr_routes.id "
+                    . "join vehicles on trips.vehicle_id = vehicles.id "
+                    . "join drivers on trips.driver_id = drivers.id "
+                    . "where trips.idno='$user->id'");
+                $menu = $this->menuRenderer();
+                return view('owner.tripList',compact('results','menu'));
+
+    }
 }
 
