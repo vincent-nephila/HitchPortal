@@ -18,7 +18,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('congratulation',['middleware' => 'guest',function(){return view('congratulation');}]);
     //Common user Routes
     Route::auth();
-    Route::get('portal','MainController@index');    
+    Route::get('/portal','MainController@index');    
     
     
     //Registration
@@ -46,8 +46,13 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('portal/owner/vehicle','Owner\OwnerController@listVehicle');
     Route::get('portal/owner/addVehicle','Owner\OwnerController@addVehicle');
     Route::post('portal/owner/addVehicle','Owner\OwnerController@saveVehicle');
+    Route::get('/portal/owner/vehicle/{id}','Owner\OwnerController@vehicleApplication');
     
-    Route::get('portal/owner/driver','Owner\OwnerController@listDriver');
+    Route::get('/portal/owner/driver','Owner\OwnerController@listDriver');
+    Route::get('/portal/owner/driver/{id}','Owner\OwnerController@driverApplication');
+    
+    Route::get('/portal/owner/driver/{id}/edit','Owner\OwnerController@editDriver');
+    Route::post('/owner/updateDriver/{id}','Owner\OwnerController@updateDriver');
     Route::get('/portal/owner/addDriver','Owner\OwnerController@addDriver');   
     Route::post('/portal/owner/addDriver','Owner\OwnerController@saveDriver');
     
@@ -89,6 +94,10 @@ Route::get('/findmeet/{destination}','AjaxController@showMeeting');
 Route::get('/finddate/{destination}/{start}','AjaxController@showDate');
 Route::get('/finddate/{destination}/{start}/{date}','AjaxController@showTrips');
 Route::get('/saveReservation','AjaxController@saveReservation');
+Route::get('/filterOwner/{filter}','AjaxController@ownerFilter');
+Route::get('/filterDriver/{filter}','AjaxController@driverFilter');
+Route::get('/availableDriver','AjaxController@availableDriver');
+Route::get('/setDriver','AjaxController@setDriver');
 });
 
 Route::get('/addVehicle/{maker}','AjaxController@getModel');
@@ -98,6 +107,6 @@ Route::get('/addYear/{model}','AjaxController@getYear');
 Route::get('/approve/{applicant}','AjaxController@changeOwnerStat');
 Route::get('/approveDriver/{applicant}','AjaxController@changeDriverStat');
 Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
-Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
+//Route::get('/approveVehicle/{applicant}','AjaxController@changeVehicleStat');
 Route::get('/addYear/{model}','AjaxController@getYear');    
     

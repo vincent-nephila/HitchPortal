@@ -27,9 +27,14 @@ class OwnerController extends Controller
         $user = \Auth::user();
         $userProfile = \App\OwnerProfile::where('idno',$user->id)->count();
         $userProf = \App\OwnerProfile::where('idno',$user->id)->first();
+        if($userProfile == 0){
+            $pic ='/images/profile.jpg';
+        }
+        else{
+            $pic = '/uploads/owner/'.$userProf->picture;
+        }
         $vehicle = \App\Vehicle::where('idno',$user->id)->first();
         $driver = \App\Driver::where('owner_id',$user->id)->first();
-        $pic = '/uploads/owner/'.$userProf->picture;
         $content ='<div style="padding:20px">';
         $content = $content.'<div class="col-md-6">';
         $content = $content.'<img src="'.$pic.'" style="width:120px;height:auto;float:right;">';
@@ -117,12 +122,14 @@ class OwnerController extends Controller
         $menu = $this->menuRenderer();
         $profile = \App\OwnerProfile::where('idno',\Auth::user()->id)->count();
         $vehicleCount = \App\Vehicle::where('idno',\Auth::user()->id)->count();
-        $vehicle = \App\Vehicle::where('idno',\Auth::user()->id)->get();
+        //$vehicle = \App\Vehicle::where('idno',\Auth::user()->id)->get();
+        $user = \Auth::user()->id;
+        $vehicle = DB::Select("SELECT *,v.id ve_id FROM `vehicles` v left join `driver_vehicles` dv on v.id = dv.veId left join `drivers` d on d.id = dv.drId where v.idno='$user'");
         if($profile == 0){
             return redirect('/');
         }
         else{
-            if ($vehicleCount >=1){
+            if ($vehicleCount > 0){
             return view('owner.vehicleList',compact('menu','vehicle'));
             }
             else{
@@ -154,7 +161,7 @@ class OwnerController extends Controller
             return redirect('portal');
         }
         else{
-            if ($driverCount >=0){
+            if ($driverCount > 0){
             $driver = \App\Driver::where('owner_id',\Auth::user()->id)->get();                
             return view('owner.driverList',compact('user','menu','driver'));
             }
@@ -214,14 +221,16 @@ class OwnerController extends Controller
         $request->file('front')->move(public_path().'/uploads/vehicle',$front.'.'.$frontExt);
         $request->file('side')->move(public_path().'/uploads/vehicle',$side.'.'.$sideExt);
         $request->file('back')->move(public_path().'/uploads/vehicle',$back.'.'.$backExt);
-        $matchfields=['maker'=>$request->maker,'model'=>$request->model,'prodYear'=>$request->year];
+        $matchfields=['maker'=>$request->maker,'model'=>$request->model];
+
         $vehicleCtr = \App\ctrVehicle::where($matchfields)->first();
+        
         $vehicle = new \App\Vehicle;
         $vehicle->idno = \Auth::user()->id;
         $vehicle->vePlateNo = $request->plateNo;
         $vehicle->veMaker = $request->maker;
         $vehicle->veModel = $request->model;
-        $vehicle->veProdYear = $request->year;
+        $vehicle->veProYear = $request->year;
         $vehicle->veColor = $request->color;
         $vehicle->veSeats = $vehicleCtr->seats;
         $vehicle->veRegistration = $reg.'.'.$regExt;
@@ -237,13 +246,10 @@ class OwnerController extends Controller
         return redirect('portal/owner/vehicle')->with('success', "New vehicle added.");
     }
     
-    
-    
     public function saveDriver(Request $request){
     if($request->manage == null){
         $this->validate($request, [
             'firstname' => 'required|max:255',
-            'middlename' => 'required|max:255',
             'lastname' => 'required|max:255',
             'mobile' => 'required|max:12',
             'email' => 'required|email|max:255|unique:drivers',
@@ -304,7 +310,7 @@ class OwnerController extends Controller
         }            
         $driverProfile->save();
 
-        return redirect('portal/owner/driver')->with('success', "New driver added.");
+        return redirect('/portal/owner/driver/'.$driver->id)->with('success', "New driver added.");
     }
     else{
             $this->validate($request, [
@@ -361,8 +367,121 @@ class OwnerController extends Controller
             $driverProfile->picture = $pic.'.'.$picExt;
         }            
         $driverProfile->save();
-        return redirect('portal/owner/driver')->with('success', "You have successfully added yourself as a driver.");
+        return redirect('/portal/owner/driver/'.$driver->id)->with('success', "You have successfully added yourself as a driver.");
     }
+    }
+    
+    public function driverApplication($id){
+        $applicant = \App\Driver::findOrFail($id);
+        
+        if($applicant->owner_id != \Auth::User()->id){
+            return redirect('portal/owner/driver');
+        }
+        $profile = \App\DriverProfile::where('idno',$applicant->id)->first();
+        $pic1 ='/uploads/driver/'.$profile->picture;
+        $pic2 ='/uploads/driver/'.$profile->lic;
+        $pic3 ='/uploads/driver/'.$profile->nbi;
+        $menu = $this->menuRenderer();
+        return view('owner.driverProfile',compact('applicant','profile','pic1','pic2','pic3','menu'));
+    }
+    
+    public function vehicleApplication($id){
+        $vehicle = \App\Vehicle::find($id);
+        $operator = \App\User::find($vehicle->idno);
+        $pic1 ='/uploads/vehicle/'.$vehicle->veFrontPic;
+        $pic2 ='/uploads/vehicle/'.$vehicle->veSidePic;
+        $pic3 ='/uploads/vehicle/'.$vehicle->veBackPic;
+        $driver = DB::Select("SELECT * FROM `driver_vehicles` dv left join `drivers` d on d.id = dv.drId left join `driver_profiles` dp on d.id = dp.idno where dv.veId='$vehicle->id'");
+        $or ='/uploads/vehicle/'.$vehicle->veReceipt;
+        $cr='/uploads/vehicle/'.$vehicle->veRegistration;
+        $insr ='/uploads/vehicle/'.$vehicle->veInsurance;
+
+        if(!is_null($driver[0]->drId)){
+        $drProfile = '/uploads/driver/'.$driver[0]->picture;}
+        else{
+            $drProfile = '';
+        }
+        
+        
+        $menu = $this->menuRenderer();
+        return view('owner.vehicleProfile',compact('vehicle','pic1','pic2','pic3','operator','or','cr','insr','menu','driver','drProfile'));
+    }    
+    
+    public function editDriver($id){
+        $applicant = \App\Driver::find($id);
+        if($applicant->owner_id != \Auth::User()->id){
+            return redirect('portal/owner/driver');
+        }
+        $profile = \App\DriverProfile::where('idno',$applicant->id)->first();
+        $pic1 ='/uploads/driver/'.$profile->picture;
+        $pic2 ='/uploads/driver/'.$profile->lic;
+        $pic3 ='/uploads/driver/'.$profile->nbi;
+        $bdate = date('m/d/Y',strtotime($profile->birthDate));
+        $licExp = date('m/d/Y',strtotime($profile->licExp));
+        $menu = $this->menuRenderer();
+        return view('owner.editDriver',compact('applicant','profile','pic1','pic2','pic3','menu','bdate','licExp'));
+    }    
+    
+    public function updateDriver(Request $request,$id){
+        $driverProfile = \App\DriverProfile::where('idno',$id)->first();
+        
+        $this->validate($request, [
+            'firstname' => 'required|max:255',
+            'lastname' => 'required|max:255',
+            'mobile' => 'required|max:12',
+            'email' => 'required|email|max:255|unique:drivers,email,'.$id,
+            'bdate' => 'required|date',
+            'address' => 'required|max:255',
+            'licNo' => 'required|max:20|unique:driver_profiles,licNo,'.$driverProfile->id,
+            'licenseExp'=> 'required|date',
+        ]);     
+        
+        $time1 = strtotime($request->bdate);
+        $newformat1 = date('Y-m-d',$time1);
+
+        $time2 = strtotime($request->licenseExp);
+        $newformat2 = date('Y-m-d',$time2);       
+        
+        
+        $driver =  \App\Driver::where('id',$id)->first();
+        $driver->firstname = $request->firstname;
+        $driver->middlename = $request->middlename;
+        $driver->lastname = $request->lastname;
+        $driver->extname = $request->ext;
+        $driver->email = $request->email;
+        $driver->mobile = $request->mobile;
+        $driver->save();
+        
+        //$driverProfile = \App\DriverProfile::where('idno',$id)->f;
+        $driverProfile->idno = $driver->id;     
+        $driverProfile->birthDate = $newformat1;          
+        $driverProfile->address = $request->address;  
+        $driverProfile->licNo = $request->licNo;
+        $driverProfile->licExp = $newformat2;          
+        
+        if ($request->hasFile('lic')) {
+            $lic = $driver->id.'-'.str_random(5);
+            $licExt = $request->file('lic')->getClientOriginalExtension();
+            $request->file('lic')->move(public_path().'/uploads/driver',$lic.'.'.$licExt);
+            $driverProfile->lic = $lic.'.'.$licExt;
+        }
+        
+        if ($request->hasFile('nbi')) {
+            $nbi = $driver->id.'-'.str_random(5);
+            $nbiExt = $request->file('nbi')->getClientOriginalExtension();
+            $request->file('nbi')->move(public_path().'/uploads/driver',$nbi.'.'.$nbiExt);
+            $driverProfile->nbi = $nbi.'.'.$nbiExt;
+        }        
+
+        if ($request->hasFile('pic')) {
+            $pic = $driver->id.'-'.str_random(5);
+            $picExt = $request->file('pic')->getClientOriginalExtension();
+            $request->file('pic')->move(public_path().'/uploads/driver',$pic.'.'.$picExt);
+            $driverProfile->picture = $pic.'.'.$picExt;
+        }            
+        $driverProfile->save();
+        
+        return redirect('/portal/owner/driver/'.$driver->id)->with('success', "New driver added.");   
     }
     
     public function createTrip(){

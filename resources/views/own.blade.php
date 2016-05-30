@@ -3,6 +3,7 @@
     <head>
 
         <link href="{{ asset('/css/custom.css') }}" rel="stylesheet">
+        <link href="{{ asset('/css/modal.css') }}" rel="stylesheet">
 
         
         <script src="{{ asset('/jquery/dist/jquery.slim.js') }}"></script>

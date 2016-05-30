@@ -7,6 +7,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    public function trip(){
+        return $this->hasMany('\App\Trip','idno');
+    }
+    public function vehicle(){
+        return $this->hasMany('\App\Vehicle','idno');
+    }      
+    
     /**
      * The attributes that are mass assignable.
      *

@@ -13,16 +13,21 @@ class MainController extends Controller
     
     public function __construct() {
         $this->middleware('auth');
-        $this->middleware('status',['except'=>['redirectRequirement','redirectApproval','redirectSuspended']]);
+        //$this->middleware('status',['except'=>['redirectRequirement','redirectApproval','redirectSuspended']]);
     }
 
     public function ownerMenuRenderer(){
         $user = \Auth::user();
         $userProfile = \App\OwnerProfile::where('idno',$user->id)->count();
         $userProf = \App\OwnerProfile::where('idno',$user->id)->first();
+        if($userProfile == 0){
+            $pic ='/images/profile.jpg';
+        }
+        else{
+            $pic = '/uploads/owner/'.$userProf->picture;
+        }
         $vehicle = \App\Vehicle::where('idno',$user->id)->first();
         $driver = \App\Driver::where('owner_id',$user->id)->first();
-        $pic = '/uploads/owner/'.$userProf->picture;
         $content ='<div style="padding:20px">';
         $content = $content.'<div class="col-md-6">';
         $content = $content.'<img src="'.$pic.'" style="width:120px;height:auto;float:right;">';
@@ -34,7 +39,7 @@ class MainController extends Controller
         $content = $content.'</div>';
         
         $content = $content.'<div>';
-        if((($user->status==env('STATUS_PROCESS'))&&($userProfile >=1))||($user->status==env('STATUS_OK'))){
+        if((($user->status==env('STATUS_PROCESS'))&&($userProfile >= 1))||($user->status==env('STATUS_OK'))){
                 $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/vehicle"><div class="menu-item">Vehicles</div></a>';
                 $content = $content.'<a class="btn btn-primary form-control menu-button" href="/portal/owner/driver"><div class="menu-item">Drivers</div></a>';
                 

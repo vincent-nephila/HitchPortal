@@ -1,14 +1,14 @@
 @extends('own')
 @section('content')
 <div>
-    <table class="table table-borderless">
+    <table class="table table-borderless" id="table">
         <thead>
-        <tr><th>Plate No</th><th>Maker</th><th>Model</th><th>Status</th></tr>        
+        <tr><th>Plate No</th><th>Model</th><th>Status</th><th>Driver</th></tr>        
         </thead>
         <tbody>
             @foreach($vehicle as $vehicles)                     
-                <tr class="clickable-row" data-href="/admin/vehicle/{{$vehicles->id}}">
-                <td>{{$vehicles->vePlateNo}}</td><td> {{$vehicles->veMaker}}</td><td> {{$vehicles->veModel}}</td><td> 
+                <tr class="clickable-row vehicle" id="{{$vehicles->ve_id}}">
+                <td>{{$vehicles->vePlateNo}}</td><td> {{$vehicles->veMaker}} {{$vehicles->veModel}} {{$vehicles->veProYear}}</td><td> 
                 @if ($vehicles->veApproved == env('VEHICLE_APPROVED'))
                     {{$result="OK"}}
                 @endif
@@ -24,7 +24,17 @@
                 @if ($vehicles->veApproved == env('VEHICLE_INCOMPLETE'))
                     {{$result="INC. REQUIREMENT"}}
                 @endif                                    
-                
+                </td>
+                <td id="assign">
+                    @if($vehicles->veApproved == env('VEHICLE_APPROVED'))
+                        @if(is_null($vehicles->drId))
+                        Assign
+                        @else
+                           {{ $vehicles->firstname}}
+                        @endif
+                    @else
+                        -
+                    @endif
                 </td>
         </tr> 
             @endforeach

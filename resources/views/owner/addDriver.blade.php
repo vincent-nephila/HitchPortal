@@ -25,7 +25,7 @@
                     <fieldset class="form-group">
                             <label class="control-label col-md-2">E Mail</label>
                             <div class="col-md-10">                         
-                                <input type="email" class="form-control" name="email" >              
+                                <input type="email" class="form-control" name="email" >
                             </div>
                     </fieldset>
                     <fieldset class="form-group">

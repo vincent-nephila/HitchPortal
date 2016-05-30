@@ -131,12 +131,19 @@ class AjaxController extends Controller
     }
     }
     public function changeVehicleStat($applicant){
-    if(Request::ajax()){
+    //if(Request::ajax()){
         $user = \App\Vehicle::find($applicant);
         $user->veApproved = 4;
+        $user->veStatus = 1;
         $user->save();
+        
+        $drivehicle = new \App\driver_vehicle;
+        $drivehicle->veId = $applicant;
+        
+        $drivehicle->save();
+
         return "Approved";
-    }
+    //}
     }    
     function saveReservation(){
         if(Request::ajax()){
@@ -171,5 +178,136 @@ class AjaxController extends Controller
         return redirect('/passenger/reservation/list')->with('success', "Successfully reserved");
         //return "now";
         }
+    }
+    
+    function ownerFilter($filter){
+        $content = '';
+        if($filter == 3){
+            $applicant = \App\User::where('accesslevel',env('USER_OWNER'))->get();
+            foreach($applicant as $applicants){
+                $content = $content.'<tr class="clickable-row" data-href="/admin/user/'.$applicants->id.'">';
+                $content = $content.'<td>'.$applicants->lastname.', '.$applicants->firstname.' '.$applicants->middlename.'</td><td style="text-align:center">';
+                if($applicants->status == env('STATUS_OK')){
+                    $content = $content.'OK';
+                }
+                if($applicants->status == env('STATUS_APPROVAL')){
+                    $content = $content.'FOR ASSESSMENT';
+                }
+                if($applicants->status == env('STATUS_PROCESS')){
+                    $content = $content.'INC. REQUIREMENT';
+                }
+                $content = $content.'</td>';
+                $content = $content.'</tr>';
+            }
+              return $content; 
+        }
+        $matchfields=['accesslevel'=>env('USER_OWNER'),'status'=>$filter];
+        $applicant = \App\User::where($matchfields)->get();
+        if($applicant->isEmpty()){
+            return "No content to show";
+        }
+            foreach($applicant as $applicants){
+                $content = $content.'<tr class="clickable-row" data-href="/admin/user/'.$applicants->id.'">';
+                $content = $content.'<td>'.$applicants->lastname.', '.$applicants->firstname.' '.$applicants->middlename.'</td><td style="text-align:center">';
+                if($applicants->status == env('STATUS_OK')){
+                    $content = $content.'OK';
+                }
+                if($applicants->status == env('STATUS_APPROVAL')){
+                    $content = $content.'FOR ASSESSMENT';
+                }
+                if($applicants->status == env('STATUS_PROCESS')){
+                    $content = $content.'INC. REQUIREMENT';
+                }
+                $content = $content.'</td>';
+                $content = $content.'</tr>';
+            }        
+        return $content;
+    }
+    
+    function driverFilter($filter){
+        $content = '';
+        if($filter == 3){
+            $applicant = \App\Driver::get();
+            foreach($applicant as $applicants){
+                $content = $content.'<tr class="clickable-row" data-href="/admin/user/'.$applicants->id.'">';
+                $content = $content.'<td>'.$applicants->lastname.', '.$applicants->firstname.' '.$applicants->middlename.'</td><td style="text-align:center;">';
+                if($applicants->acctStatus == env('DRIVER_OK')){
+                    $content = $content.'OK';
+                }
+                if($applicants->acctStatus == env('DRIVER_PROCESS')){
+                    $content = $content.'FOR ASSESSMENT';
+                }
+                if($applicants->acctStatus == env('DRIVER_SUSPENDED')){
+                    $content = $content.'SUSPENDED';
+                }
+                $content = $content.'</td>';
+                $content = $content.'</tr>';
+            }
+              return $content; 
+        }
+        $matchfields=['acctStatus'=>$filter];
+        $applicant = \App\Driver::where($matchfields)->get();
+        if($applicant->isEmpty()){
+            return "No content to show";
+        }
+            foreach($applicant as $applicants){
+                $content = $content.'<tr class="clickable-row" data-href="/admin/user/'.$applicants->id.'">';
+                $content = $content.'<td>'.$applicants->lastname.', '.$applicants->firstname.' '.$applicants->middlename.'</td><td style="text-align:center">';
+                if($applicants->acctStatus == env('DRIVER_OK')){
+                    $content = $content.'OK';
+                }
+                if($applicants->acctStatus == env('DRIVER_PROCESS')){
+                    $content = $content.'FOR ASSESSMENT';
+                }
+                if($applicants->acctStatus == env('DRIVER_SUSPENDED')){
+                    $content = $content.'SUSPENDED';
+                }
+                $content = $content.'</td>';
+                $content = $content.'</tr>';
+            }        
+        return $content;
+    }
+    
+    function availableDriver(){
+        $matchfields = ['acctStatus'=>1,'status'=>env('DRASSIGNMENT_AVAILABLE'),'owner_id'=>\Auth::user()->id];
+        $drivers = \App\Driver::where($matchfields)->get();
+        
+        $content = '<div class="btn btn-success setDriver"  style="display: inline-block;border-top-right-radius: 0px;border-bottom-right-radius:">OK</div><select class="form-control" id="drivers" name="driver" style="display: inline-block;width: 80%;border-top-left-radius: 0px;border-bottom-left-radius: 0px;">';
+    foreach($drivers as $driver){
+        $content= $content.'<option value="'.$driver->id.'">'.$driver->firstname.' '.$driver->lastname.'</option>';
+    }
+    $content =$content.'</select>';
+    
+    return $content;
+        
+    }
+    
+    function setDriver(){
+       // if(Request::ajax()){
+        
+            $driver = Input::get(0);
+            $vehicle = Input::get(1);
+            $orgDriver = Input::get(2);
+          
+            $driver_vehicle = \App\driver_vehicle::where('veId',$vehicle)->first();
+            $driver_vehicle->drId=$driver;
+            $driver_vehicle->save();
+            
+            $driverstat = \App\Driver::find($driver)->first();
+            $driverstat->status = env('DRASSIGNMENT_ASSIGNED');
+            $driverstat->save();
+            
+            $orgdriverstat = \App\Driver::find($orgDriver)->first();
+            $orgdriverstat->status = env('DRASSIGNMENT_AVAILABLE');
+            $orgdriverstat->save();            
+            
+            $showdrive = DB::Select("SELECT * FROM `driver_vehicles` dv left join `drivers` d on d.id = dv.drId left join `driver_profiles` dp on d.id = dp.idno where veId='$vehicle'");
+            $pic = '/uploads/driver/'.$showdrive[0]->picture;
+            
+            $display = '<img src="'.$pic.'" class="img-responsive" height="100%" width="auto" style="max-height:100px;display:inline-block">';
+            $display= $display.'<div style="display: inline-block">'.$showdrive[0]->firstname.' '.$showdrive[0]->lastname.'<br><button class="btn btn-default" id="myBtn">Change Driver</button></div>';
+            
+         return $display;
+        
     }
 }

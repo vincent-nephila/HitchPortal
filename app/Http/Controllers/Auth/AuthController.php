@@ -30,7 +30,8 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/portal';
+    protected $redirectPath = '/portal';
     
     /**
      * Create a new authentication controller instance.

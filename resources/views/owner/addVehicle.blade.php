@@ -34,9 +34,10 @@
                         <fieldset class="form-group">
                             <label class="control-label col-md-2">Year</label>
                             <div class="col-md-10" id="year">                            
-                            <select class="form-control" name="year">
+                            <!--select class="form-control" name="year">
                                 <option value="" disabled hidden selected></option>      
-                            </select>
+                            </select-->
+                            <input type="text" class="form-control" name="year">
                             </div>
                         </fieldset>
                         
@@ -109,7 +110,7 @@ function getModel(maker) {
             }); 
                       
 }
-
+/*
 function getYear(maker) {
     $.ajax({ 
             type: "GET", 
@@ -121,7 +122,7 @@ function getYear(maker) {
                  }
             }); 
                       
-}
+}*/
 </script>
 
 

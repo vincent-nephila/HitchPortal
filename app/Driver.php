@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Driver extends Model
 {
-    public function trip()
-    {
-        return $this->hasOne('App\Trip','driver_id');
-    }
+           public function trip(){
+        return $this->hasMany('\App\Trip');
+    } 
 }

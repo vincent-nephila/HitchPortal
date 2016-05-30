@@ -1,6 +1,7 @@
-@extends('admin')
+@extends('own')
 @section('content')
 
+<div style="padding-top:20px">
 <div class="col-md-3">
 <img src="{{url($pic1)}}" style="height:auto;width:100%;">
 </div>
@@ -39,22 +40,14 @@
                 <td>
                     <b>License No:</b>{{$profile->licNo}}       <b style="padding-left: 20%">Exp. Date: </b>{{$profile->licExp}}
                 </td>
-            </tr>
-            
-            <tr>
-                <td>
-                    <b>Operator</b>: {{$operator->lastname}}, {{$operator->firstname}}
-                </td>
-            </tr>           
+            </tr>          
         </tbody>
     </table>
-@if($applicant->acctStatus == env('DRIVER_PROCESS'))
-<button class='btn btn-success' onclick="approve({{$applicant->id}})"><div id="status">Approve</div></button>
-@endif
-@if($applicant->acctStatus == env('STATUS_OK'))
+@if($applicant->status == env('STATUS_OK'))
 <div id="status" class="btn btn-success btn-dis">APPROVED</div>
 @endif
 </div>
+</div>    
 <div class="col-md-12">
 <h3>Documents</h3>
 <a class="fancybox" rel="group" href="{{url($pic2)}}"><div style="display:inline-block;text-align: center;">
@@ -67,6 +60,12 @@
 <h5><b>NBI</b></h5>
 </div></a>
 </div>
+<div class="col-sm-offset-10 col-sm-2" style="text-align: right;">
+                @if($applicant->status == 0)
+                            <a href="{{url('portal/owner/driver/'.$applicant->id.'/edit')}}" class="btn btn-primary">  Edit  </a>
+                            @endif
+                            <a href="{{url('portal/owner/driver/')}}" class="btn btn-primary">  OK  </a>
+                        </div>
 <script>
 function approve(applicant){
    // document.getElementById("status").innerHTML = applicant;
