@@ -77,20 +77,26 @@ class AjaxController extends Controller
         }
     }
     
-    public function showTrips($destination,$start,$date){
-        if(Request::ajax()){
+    public function showTrips($destination){
+        //if(Request::ajax()){
+            /*
             $results = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "
                     . "join ctr_routes on trips.route = ctr_routes.id "
                     . "join vehicles on trips.vehicle_id = vehicles.id "
                     . "join drivers on trips.driver_id = drivers.id "
-                    . "where ctr_routes.destinationPoint = '$destination' AND ctr_routes.startPoint = '$start'  AND trips.date = '$date'  AND trips.seats != 0;");
+                    . "where ctr_routes.destinationPoint = '$destination' AND ctr_routes.startPoint = '$start'  AND trips.seats != 0;");
+             * */
+            $results = DB::Select("SELECT *, t.id tripId,t.seats tripSeat FROM `ctr_routes` r "
+                    . "left join `trips` t on r.id=t.routeId "
+                    . "left join `driver_vehicles` dv on dv.id=t.drVeId "
+                    . "left join `vehicles` v on v.id=dv.veId where r.destination='$destination'");
             $value = '';
             foreach($results as $result){
                 $pic ='/uploads/vehicle/'.$result->veFrontPic;
                 $value = $value.'<div class ="container item" id="'.$result->tripId.'" style="width: 100%;">';
                 $value = $value.'<div class ="col-md-3"><img src="http://hitch.app'.$pic.'" style="height:auto; width:100%;"></div>';
                 $value = $value.'<div class ="col-md-9">';
-                $value = $value. 'Start: '.$result->startPoint.'<br>';
+                $value = $value. 'Start: '.$result->pointOrigin.'<br>';
                 $value = $value. 'Date:'.$result->date.'<br>';
                 $value = $value. 'Time:'.$result->time.'<br>';
                 $value = $value. 'Vehicle:'.$result->veModel.'<br>';               
@@ -98,7 +104,7 @@ class AjaxController extends Controller
                 $value = $value. '</div></div>';
             }
         return $value;
-        }
+        //}
     }
     
     public function showSeats($trip){

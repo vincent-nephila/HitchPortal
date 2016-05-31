@@ -10,29 +10,21 @@
                                 <select class="form-control"  name="route" onchange="findMeet(this.value)">
                                     <option value="" disabled hidden selected></option>
                                     @foreach($route as $routes)
-                                    <option value="{{$routes->destinationPoint}}">{{$routes->destinationPoint}}</option>
+                                    <option value="{{$routes->destination}}">{{$routes->destination}}</option>
                                     @endforeach 
                                 </select>
                             </div>
                         </fieldset>
                         
                         <fieldset class="form-group">
-                            <label class="control-label col-md-2">Meeting Point</label>
-                            <div class="col-md-10" >                          
-                            <select class="form-control" id="meet" name="meetPoint" onclick="findDate()">
-                                <option value="" disabled hidden selected></option>      
-                            </select>
-                            </div>
+                                <label class="control-label col-md-2">Date:</label>
+                                <div class="col-md-10"> 
+                                    <input type="text" class="form-control" id="datepicker" name="date" >
+                                </div>
                         </fieldset>
-                        
-                        <fieldset class="form-group">
-                            <label class="control-label col-md-2">Date</label>
-                            <div class="col-md-10" >                            
-                            <select class="form-control" id="date" name="date" onclick="findTrip()">
-                                <option value="" disabled hidden selected></option>      
-                            </select>
-                            </div>
-                        </fieldset>                        
+                        <div class="col-sm-offset-10 col-sm-2" style="text-align: right;">
+                            <div onclick='findTrip()' class="btn btn-primary">Search</div>
+                        </div>                
                         
                         <div class="container" id="tripOption">
                         <div id="trip" class="selectable">
@@ -54,6 +46,7 @@
                     <div id="test"></div>
                   
 <script>
+
 function findMeet(destination) {
     //$("#tripOption").css({'height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
     
@@ -86,11 +79,11 @@ function findDate() {
 }
 
 function findTrip() {
-    $("#tripOption").css({'height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
+    $("#tripOption").css({'max-height':'380px','overflow-y':'scroll','width':'100%','padding-left':'165px'});
     
     $.ajax({ 
             type: "GET", 
-            url: "/finddate/"+$('select[name=route]').val()+"/"+$('select[name=meetPoint]').val()+"/"+$('select[name=date]').val(),
+            url: "/finddate/"+$('select[name=route]').val()+"/"+$('input[name=date]').val(),
             success:function(data){
                 $('#trip').html(data);
                  }

@@ -93,7 +93,7 @@ Route::group(['middleware' => ['web']], function () {
     });
 Route::get('/findmeet/{destination}','AjaxController@showMeeting');
 Route::get('/finddate/{destination}/{start}','AjaxController@showDate');
-Route::get('/finddate/{destination}/{start}/{date}','AjaxController@showTrips');
+Route::get('/finddate/{destination}','AjaxController@showTrips');
 Route::get('/saveReservation','AjaxController@saveReservation');
 Route::get('/filterOwner/{filter}','AjaxController@ownerFilter');
 Route::get('/filterDriver/{filter}','AjaxController@driverFilter');

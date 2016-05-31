@@ -50,7 +50,7 @@ class PassengerController extends Controller
     
     public function makeReservation(){
                 $user = \Auth::user();
-                $route = DB::Select('select distinct destinationPoint from ctr_routes');
+                $route = DB::Select('select distinct destination from ctr_routes');
                 $menu = $this->menuRenderer();
                 return view('passenger.makeReservation',compact('user','route','menu'));
                 
@@ -61,10 +61,10 @@ class PassengerController extends Controller
             'trip' => 'required',
             ]);
         $menu = $this->menuRenderer();
-
         
         $trip = \App\Trip::find($request->trip);
-        $vehicle = \App\Vehicle::find($trip->vehicle_id);
+        $driverVehicle = \App\driver_vehicle::find($trip->drVeId);
+        $vehicle = \App\Vehicle::find($driverVehicle->veId);
         $matchfields=['tripId'=>$request->trip,'available'=>0];
         $takenSeat = \App\Seat::where($matchfields)->get();
         if($vehicle->veSeats == 4){
@@ -73,6 +73,9 @@ class PassengerController extends Controller
         if($vehicle->veSeats == 5){
         $layout = $this->fiveSeater();
         }
+        if($vehicle->veSeats == 8){
+        $layout = $this->eightSeater();
+        }        
         if($vehicle->veSeats == 11){
         $layout = $this->elevenSeater();
         }        
@@ -113,6 +116,26 @@ class PassengerController extends Controller
         $content=$content.'<div class="seat" id="3"></div>';
         $content=$content.'<div class="seat" id="4"></div>';
         $content=$content.'</div>';
+        $content=$content.'<div id="count"></div>';
+        
+        return $content;
+    }    
+    
+        public function eightSeater(){
+        $content='<div>';
+        $content=$content.'<div class="driver">Driver</div>';
+        $content=$content.'<div class="seat" id="1"></div>';
+        $content=$content.'</div>';
+        $content=$content.'<div>';
+        $content=$content.'<div class="seat" id="2"></div>';
+        $content=$content.'<div class="seat" id="3"></div>';
+        $content=$content.'<div class="seat" id="4"></div>';
+        $content=$content.'</div>';
+        $content=$content.'<div>';
+        $content=$content.'<div class="seat" id="5"></div>';
+        $content=$content.'<div class="seat" id="6"></div>';
+        $content=$content.'<div class="seat" id="7"></div>';
+        $content=$content.'</div>';        
         $content=$content.'<div id="count"></div>';
         
         return $content;
