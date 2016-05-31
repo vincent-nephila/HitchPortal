@@ -50,6 +50,15 @@ class AjaxController extends Controller
         }
     }
     
+    public function pickUp($id){
+        $route = \App\ctrRoute::where('id',$id)->first();
+        $content = '<label class="control-label col-md-2">Pickup:</label>';
+        $content=$content.'<div class="col-md-10">';
+        $content=$content.$route->pointOrigin;
+        $content=$content.'</div>';
+        return $content;
+    }
+    
         public function showDate($destination,$start){
         if(Request::ajax()){
             $result = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "
@@ -288,26 +297,31 @@ class AjaxController extends Controller
             $driver = Input::get(0);
             $vehicle = Input::get(1);
             $orgDriver = Input::get(2);
-          
+            //$driver = 3;
+            //$vehicle = 2;
+            //$orgDriver = 1;
             $driver_vehicle = \App\driver_vehicle::where('veId',$vehicle)->first();
             $driver_vehicle->drId=$driver;
             $driver_vehicle->save();
+
             
-            $driverstat = \App\Driver::find($driver)->first();
-            $driverstat->status = env('DRASSIGNMENT_ASSIGNED');
-            $driverstat->save();
-            
+            if($orgDriver > 0){
             $orgdriverstat = \App\Driver::find($orgDriver)->first();
             $orgdriverstat->status = env('DRASSIGNMENT_AVAILABLE');
             $orgdriverstat->save();            
+            }
+            
+            $driverstat = \App\Driver::where('id',$driver)->first();
+            $driverstat->status = 0;
+            $driverstat->save();            
             
             $showdrive = DB::Select("SELECT * FROM `driver_vehicles` dv left join `drivers` d on d.id = dv.drId left join `driver_profiles` dp on d.id = dp.idno where veId='$vehicle'");
             $pic = '/uploads/driver/'.$showdrive[0]->picture;
-            
+            //$change=$this->swapDriver($driver);
             $display = '<img src="'.$pic.'" class="img-responsive" height="100%" width="auto" style="max-height:100px;display:inline-block">';
-            $display= $display.'<div style="display: inline-block">'.$showdrive[0]->firstname.' '.$showdrive[0]->lastname.'<br><button class="btn btn-default" id="myBtn">Change Driver</button></div>';
+            $display= $display.'<div style="display: inline-block;" id="withDriver">'.$showdrive[0]->firstname.' '.$showdrive[0]->lastname.'</br><div class="btn btn-default myBtn3">Change Driver</div></div>';
             
          return $display;
-        
     }
+
 }

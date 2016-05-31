@@ -116,3 +116,6 @@ div.taken{
 .editField{
     margin-bottom: 0px!important;
 }
+div.selection{
+    cursor: pointer;
+}

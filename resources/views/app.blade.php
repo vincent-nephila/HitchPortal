@@ -29,13 +29,13 @@
                 
                <div id="navbarCollapse" class="navbar-collapse collapse ">
                         <ul class="nav navbar-nav">
-                        <li><a href='/'style="background-color: #f96e5b;"><span>Home</span></a></li>
+                        <li><a href='/'style="background-color: #F9D796;"><span>Home</span></a></li>
                         <!--<li><a href='#'><span>Company</span></a></li>
                         <li><a href='#'><span>Contact</span></a></li> -->
                 
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                        <li><a href ="login" style="background-color: #f96e5b;" >Log In</a></li>
+                        <li><a href ="login" style="background-color: #F9D796;" >Log In</a></li>
                         </ul>
                 </div>         
             </div>

@@ -21,8 +21,8 @@
                 <tr class="clickable-row" >
                 <td>{{$result->date}}</td>
                 <td>{{$result->time}}</td>
-                <td>{{$result->destinationPoint}}</td>
-                <td>{{$result->startPoint}}</td>
+                <!--td>{{$result->destinationPoint}}</td>
+                <td>{{$result->startPoint}}</td-->
         </tr> 
             @endforeach
         </tbody>

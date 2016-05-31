@@ -59,6 +59,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/portal/owner/createTrip','Owner\OwnerController@createTrip');
     Route::post('/portal/owner/createTrip','Owner\OwnerController@saveTrip');
     Route::get('/portal/owner/trip','Owner\OwnerController@listTrips');
+    Route::get('/portal/owner/trip/{id}','Owner\OwnerController@tripInfo');
     
     Route::get('/passenger/reservation','Passenger\PassengerController@makeReservation');
     Route::post('/passenger/reservation','Passenger\PassengerController@saveReservation');
@@ -98,6 +99,7 @@ Route::get('/filterOwner/{filter}','AjaxController@ownerFilter');
 Route::get('/filterDriver/{filter}','AjaxController@driverFilter');
 Route::get('/availableDriver','AjaxController@availableDriver');
 Route::get('/setDriver','AjaxController@setDriver');
+Route::get('/getPickup/{id}','AjaxController@pickUp');
 });
 
 Route::get('/addVehicle/{maker}','AjaxController@getModel');

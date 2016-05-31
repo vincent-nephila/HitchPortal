@@ -485,27 +485,20 @@ class OwnerController extends Controller
     }
     
     public function createTrip(){
-        $user = \Auth::user();
-        $route = DB::Select('select * from ctr_routes order by destinationPoint,startPoint;');
-
-        $matchfields=['idno'=>$user->id,'veApproved'=>env('VEHICLE_APPROVED'),'veStatus'=>0];
-        $vehicle=\App\Vehicle::where($matchfields)->get();  
-        
-        $matchfield2=['owner_id'=>$user->id,'acctStatus'=>env('DRIVER_OK'),'status'=>1];
-        $drivers=\App\Driver::where($matchfield2)->get();  
-        
-        
+        $user=\Auth::user()->id;
+        $destination = DB::Select('select * from ctr_routes order by destination;');        
+        $vehicle = DB::Select("SELECT *,v.id,dv.id vrDrId FROM `vehicles` v left join `driver_vehicles` dv on v.id = dv.veId left join `drivers` d on d.id = dv.drId where v.idno='$user' AND dv.status=0 AND drId IS NOT NULL");
         $menu = $this->menuRenderer();
-        return view('owner.createTrip',compact('route','menu','vehicle','drivers'));
+        return view('owner.createTrip',compact('menu','destination','vehicle'));
     }
     
     public function saveTrip(Request $request){
         $this->validate($request, [
-            'route' => 'required|max:255',
+            'destination' => 'required|max:255',
             'date' => 'required|date',
             'time' => 'required|max:20',
             'vehicle' => 'required|max:255',
-            'driver' => 'required|max:255',
+           
             
         ]);        
         $date = strtotime($request->date);
@@ -513,15 +506,14 @@ class OwnerController extends Controller
         
         $time = strtotime($request->time);
         $timeformat = date('H:i',$time); 
+        $driverhicle = \App\driver_vehicle::find($request->vehicle)->first();
         
-        $vehicle = \App\Vehicle::find($request->vehicle);
-        $driver = \App\Driver::find($request->driver);
+        $vehicle = \App\Vehicle::find($driverhicle->veId);
+        
         
         $trip = new \App\Trip;
-        $trip->idno = \Auth::user()->id;
-        $trip->route = $request->route;
-        $trip->vehicle_id = $request->vehicle;
-        $trip->driver_id = $request->driver;
+        $trip->routeId = $request->destination;
+        $trip->drVeId = $request->vehicle;
         $trip->seats = $vehicle->veSeats;
         $trip->date = $newformat;
         $trip->time = $timeformat;
@@ -538,14 +530,20 @@ class OwnerController extends Controller
             $seatno = $seatno+1;
         }
         
-        $vehicle->veStatus= 1;
-        $vehicle->save();
+        $driverhicle->status=2;
+        $driverhicle->save();
         
-        $driver->status = 2;
-        $driver->save();
-        return $vehicle->veSeats;
+        return redirect('/portal/owner/trip/'.$trip->id);
     }
     
+    public function tripInfo($id){
+        $trip = \App\Trip::where('id',$id)->first();
+        $vehicle = DB::Select("SELECT *,v.id,dv.id vrDrId FROM `vehicles` v left join `driver_vehicles` dv on v.id = dv.veId left join `drivers` d on d.id = dv.drId where dv.id=$trip->drVeId");
+        $route = \App\ctrRoute::where('id',$trip->routeId)->first();
+        $menu = $this->menuRenderer();
+        return view('owner.tripInfo',compact('trip','vehicle','route','menu'));
+        //return $trip.' '.$route.' '.$vehicle[0]->vrDrId;
+    }
     public function listTrips(){
                 $user = \Auth::user();            
                     $results = DB::Select("select *,trips.seats tripSeat,trips.id tripId from trips "

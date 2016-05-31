@@ -58,10 +58,10 @@
         <h4>Driver</h4>
         <div id="driverPad">
         @if(is_null($driver[0]->drId))
-               <button class="btn btn-default" id="myBtn2">Assign Driver</button>         
+               <div class="btn btn-default myBtn2" >Assign Driver</div>         
          @else
          <img src="{{url($drProfile)}}" class="img-responsive" height="100%" width="auto" style="max-height:100px;display:inline-block">
-         <div style="display: inline-block">{{$driver[0]->firstname}} {{$driver[0]->lastname}} <br><button class="btn btn-default" id="myBtn">Change Driver</button></div>
+         <div style="display: inline-block;" id="withDriver">{{$driver[0]->firstname}} {{$driver[0]->lastname}} <br><div class="btn btn-default myBtn">Change Driver</div></div>
          @endif
          </div>
     </div> 
@@ -82,19 +82,23 @@
 </div>
 </div>    
 <script>
-// Get the modal
-var modal = document.getElementById('myModal');
-
-// Get the button that opens the modal
-var btn = document.getElementById("myBtn");
-var btn2 = document.getElementById("myBtn2");
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-    $.ajax({
+var modal = document.getElementById('myModal');    
+var span = document.getElementsByClassName("close")[0];    
+$("#driverPad").on("click","div.myBtn2", function(){
+    change();
+ 
+});
+$("#withDriver").on("click","div.myBtn", function(){
+    change();
+ 
+});
+$("#driverPad").on('click',"div.myBtn3", function(){
+    
+    change();
+ 
+});
+function change(){
+        $.ajax({
         type:"GET",
         url:"/availableDriver",
         success:function(data){
@@ -104,19 +108,6 @@ btn.onclick = function() {
     modal.style.display = "block";
 }
 
-btn2.onclick = function() {
-    alert('now');
-    $.ajax({
-        type:"GET",
-        url:"/availableDriver",
-        success:function(data){
-            $('.modal-body').html(data);
-        }
-    });
-    modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
 span.onclick = function() {
     modal.style.display = "none";
 }
@@ -127,13 +118,16 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
-
 $(".modal-body").on("click", "div.setDriver", function(){
 
     var arrays ={} ;
     arrays[0] =$('#drivers').val();
     arrays[1]={{$vehicle->id}};
-    arrays[2]={{$driver[0]->id}};
+    @if(is_null($driver[0]->drId))
+        arrays[2]= 0;
+    @else
+        arrays[2]={{$driver[0]->id}};
+    @endif
         $.ajax({
             type:"GET",
             url:"/setDriver",
